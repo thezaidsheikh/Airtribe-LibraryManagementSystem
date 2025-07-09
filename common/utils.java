@@ -35,25 +35,7 @@ public class utils {
             randomNum = (randomNum * 10) + (int) (Math.random() * 10);
         }
 
-        return randomNum;
-    }
-
-    /**
-     * Generates a unique invoice number
-     * 
-     * @return a unique invoice number
-     */
-    public static String generateInvoiceNumber() {
-        return "INV-" + getEpochTime();
-    }
-
-    /**
-     * Generates a unique customer number
-     * 
-     * @return a unique customer number
-     */
-    public static String generateCustomerNumber() {
-        return "CUS-" + generateId(4);
+        return Math.abs(randomNum);
     }
 
     /**
@@ -66,15 +48,6 @@ public class utils {
     }
 
     /**
-     * Generates a unique product number
-     * 
-     * @return a unique product number
-     */
-    public static String generateProductNumber() {
-        return "PROD-" + generateId(4);
-    }
-
-    /**
      * Saves a list of objects to a file
      * 
      * @param fileName the name of the file to save to
@@ -83,7 +56,7 @@ public class utils {
     public static <T> void saveData(String fileName, List<T> al) throws Exception {
         int extensionIndex = fileName.lastIndexOf(".");
         System.out.println("EXTENSION INDEX: " + extensionIndex);
-        if(extensionIndex == -1) {
+        if (extensionIndex == -1) {
             throw new Exception("Invalid file name");
         }
         File file = new File(fileName);
@@ -101,7 +74,7 @@ public class utils {
                 writer.write("\n");
             }
             System.out.println("WRITING IN FILE DONE");
-        
+
             String serializedFileName = fileName.substring(0, extensionIndex) + ".ser";
             System.out.println("SERIALIZED FILE NAME: " + serializedFileName);
             DataManager.saveDataToFile(serializedFileName, al);
@@ -122,6 +95,7 @@ public class utils {
             return new ArrayList<T>();
         }
     }
+
     public static Stream<String> readData(String fileName) {
         File file = new File(fileName);
         if (!file.exists()) {
@@ -158,10 +132,10 @@ public class utils {
      * @return the due date for the invoice
      */
     // public static long getDueDate(long invoiceDate, PaymentTerms paymentTerms) {
-    //     String days = paymentTerms.toString().split("_")[1];
-    //     return Instant.ofEpochMilli(invoiceDate)
-    //             .plus(Duration.ofDays(Long.parseLong(days)))
-    //             .toEpochMilli();
+    // String days = paymentTerms.toString().split("_")[1];
+    // return Instant.ofEpochMilli(invoiceDate)
+    // .plus(Duration.ofDays(Long.parseLong(days)))
+    // .toEpochMilli();
     // }
 
     /**

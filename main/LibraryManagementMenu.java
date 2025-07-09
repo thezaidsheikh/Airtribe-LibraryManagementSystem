@@ -10,6 +10,7 @@ import service.BookService;
 public class LibraryManagementMenu {
     Scanner scn = new Scanner(System.in);
     BookService bookService = new BookService();
+
     /**
      * Sets up the application to show options
      */
@@ -73,7 +74,17 @@ public class LibraryManagementMenu {
                     System.out.println("====================== START - ADD NEW BOOK ======================\n");
                     bookService.addBook();
                     System.out.println("====================== END - ADD NEW BOOK ======================\n");
-                    break; 
+                    break;
+                case "2":
+                    System.out.println("====================== START - UPDATE BOOK ======================\n");
+                    bookService.updateBook();
+                    System.out.println("====================== END - UPDATE BOOK ======================\n");
+                    break;
+                case "3":
+                    System.out.println("====================== START - SEARCH BOOK ======================\n");
+                    bookService.searchBook();
+                    System.out.println("====================== END - SEARCH BOOK ======================\n");
+                    break;
                 case "27":
                     System.out.println("Thank you for using the Library Management System. Goodbye!");
                     System.exit(0);

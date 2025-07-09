@@ -1,5 +1,23 @@
 {
-  "notebook.defaultFormatter": "redhat.java",
-  "editor.defaultFormatter": "redhat.java",
-  "editor.formatOnSave": true
+  "workbench.colorCustomizations": {
+    "activityBar.activeBackground": "#ffdd8e",
+    "activityBar.background": "#ffdd8e",
+    "activityBar.foreground": "#15202b",
+    "activityBar.inactiveForeground": "#15202b99",
+    "activityBarBadge.background": "#009f6f",
+    "activityBarBadge.foreground": "#e7e7e7",
+    "commandCenter.border": "#15202b99",
+    "sash.hoverBorder": "#ffdd8e",
+    "statusBar.background": "#ffcd5b",
+    "statusBar.foreground": "#15202b",
+    "statusBarItem.hoverBackground": "#ffbd28",
+    "statusBarItem.remoteBackground": "#ffcd5b",
+    "statusBarItem.remoteForeground": "#15202b",
+    "titleBar.activeBackground": "#ffcd5b",
+    "titleBar.activeForeground": "#15202b",
+    "titleBar.inactiveBackground": "#ffcd5b99",
+    "titleBar.inactiveForeground": "#15202b99"
+  },
+  "peacock.color": "#FFCD5B",
+  "editor.defaultFormatter": "redhat.java"
 }

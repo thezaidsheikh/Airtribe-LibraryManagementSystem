@@ -1,4 +1,3 @@
-Book [ISBN=1221478000, title=Bro Code, author=Zaid Sheikh, publisher=Trax Ltd, publicationYear=2022, category=null, bookType=Physical Book, pages=240, totalCopies=500, availableCopies=500, reservedCopies=0]
-Book [ISBN=972616471, title=The Last Ride, author=Faizan Qureshi, publisher=SSH Ltd, publicationYear=2020, category=null, bookType=EBook, fileFormat=pdf, isDrmProtected=true]
-Book [ISBN=910901100, title=Office Collegue, author=Zaid Sheikh, publisher=Leetcom Ltd, publicationYear=2025, category=null, bookType=EBook, fileFormat=adv, isDrmProtected=false]
-Book [ISBN=766090345, title=Final Destination, author=Robert, publisher=Fertin Ltd, publicationYear=2025, category=null, bookType=Audio Book, narratorName=Zaid Sheikh, audioFormat=adv, audioLength=3]
+Book [ISBN=-1331723818, title=The Last Ride, author=Zaid Sheikh, publisher=Leetcom Ltd, publicationYear=2020, category=Fiction, bookType=Physical Book, pages=350, totalCopies=3500, availableCopies=3500, reservedCopies=0]
+Book [ISBN=-1422677787, title=Two Babies, author=Zaid Sheikh, publisher=Friday Ltd, publicationYear=2024, category=Children, bookType=Audio Book, narratorName=John, audioFormat=adv, audioLength=3]
+Book [ISBN=1449425660, title=The Final Destination, author=Copper, publisher=Lee Ltd, publicationYear=2025, category=Drama, bookType=EBook, fileFormat=pdf, isDrmProtected=false]
