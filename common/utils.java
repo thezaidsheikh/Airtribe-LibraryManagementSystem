@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -39,12 +40,29 @@ public class utils {
     }
 
     /**
-     * Generates a unique payment number
+     * Returns the current epoch time in milliseconds
      * 
-     * @return a unique payment number
+     * @return the current epoch time in milliseconds
      */
-    public static String generatePaymentNumber() {
-        return "PAY-" + generateId(4);
+    public static long getEpochTime() {
+        return Instant.now().toEpochMilli();
+    }
+
+    /**
+     * Converts an epoch time to a LocalDate
+     * 
+     * @param number the epoch time to convert
+     * @return the LocalDate representation of the epoch time
+     */
+    public static LocalDate convertEpochToDate(long number) {
+        Instant instant = Instant.ofEpochMilli(number);
+        ZoneId zoneId = ZoneId.systemDefault(); // Use the system default time zone
+        LocalDate localDate = instant.atZone(zoneId).toLocalDate();
+        return localDate;
+    }
+
+    public static long getDateAfterDays(long epochTime, int days) {
+        return Instant.ofEpochMilli(epochTime).plus(Duration.ofDays(days)).toEpochMilli();
     }
 
     /**
@@ -113,53 +131,6 @@ public class utils {
             System.out.println("Error reading file: " + e.getMessage());
             throw new Error("Error reading file: " + e.getMessage());
         }
-    }
-
-    /**
-     * Returns the current epoch time in milliseconds
-     * 
-     * @return the current epoch time in milliseconds
-     */
-    public static long getEpochTime() {
-        return Instant.now().toEpochMilli();
-    }
-
-    /**
-     * Returns the due date for an invoice based on the payment terms
-     * 
-     * @param invoiceDate  the invoice date
-     * @param paymentTerms the payment terms
-     * @return the due date for the invoice
-     */
-    // public static long getDueDate(long invoiceDate, PaymentTerms paymentTerms) {
-    // String days = paymentTerms.toString().split("_")[1];
-    // return Instant.ofEpochMilli(invoiceDate)
-    // .plus(Duration.ofDays(Long.parseLong(days)))
-    // .toEpochMilli();
-    // }
-
-    /**
-     * Returns the discount amount for a given total amount and discount percentage
-     * 
-     * @param totalAmount        the total amount
-     * @param discountPercentage the discount percentage
-     * @return the discount amount
-     */
-    public static long getDiscountAmount(long totalAmount, int discountPercentage) {
-        return (totalAmount * discountPercentage) / 100;
-    }
-
-    /**
-     * Converts an epoch time to a LocalDate
-     * 
-     * @param number the epoch time to convert
-     * @return the LocalDate representation of the epoch time
-     */
-    public static LocalDate convertEpochToDate(long number) {
-        Instant instant = Instant.ofEpochMilli(number);
-        ZoneId zoneId = ZoneId.systemDefault(); // Use the system default time zone
-        LocalDate localDate = instant.atZone(zoneId).toLocalDate();
-        return localDate;
     }
 
     /**

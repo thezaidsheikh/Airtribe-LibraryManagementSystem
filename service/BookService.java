@@ -420,7 +420,7 @@ public class BookService {
      * @throws Exception if any error occurs
      */
     public void viewBookDetails() throws Exception {
-        System.out.println("Enter book ISBN number: ");
+        System.out.print("Enter book ISBN number: ");
         long isbn = Long.parseLong(scn.nextLine());
         if (isbn < 0) {
             throw new Exception("Invalid book ISBN");
@@ -463,7 +463,7 @@ public class BookService {
         }
         if (book instanceof PhysicalBook) {
             PhysicalBook physicalBook = (PhysicalBook) book;
-            if (physicalBook.getAvailableCopies() > 0) {
+            if (physicalBook.isAvailable()) {
                 System.out.println("Book is available");
             } else {
                 System.out.println("Book is not available");
@@ -471,5 +471,28 @@ public class BookService {
         } else {
             System.out.println("Book is available");
         }
+    }
+
+    protected Book getBookById(long isbn) {
+        for (Book b : this.books) {
+            if (b.getISBN() == isbn) {
+                return b;
+            }
+        }
+        return null;
+    }
+
+    protected void updateBookInList(Book book) throws Exception {
+        int bookIndex = IntStream.range(0, this.books.size())
+                .filter(i -> this.books.get(i).getISBN() == book.getISBN())
+                .findFirst().orElse(-1);
+        if (bookIndex == -1) {
+            throw new Exception("Book not found");
+        }
+        this.books.set(bookIndex, book);
+    }
+
+    protected void updateBookInDatabase() throws Exception {
+        utils.saveData("./db/books.txt", this.books);
     }
 }

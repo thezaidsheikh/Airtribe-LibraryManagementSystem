@@ -1,0 +1,2 @@
+Member [memberId=976791523, name=Saba, email=saba@yopmail.com, phone=234324324, membershipDate=1752227615531, memberType=Student, borrowingLimit=5, currentBorrowedBooks=0, totalFineAmount=0.0, membershipStatus=ACTIVE, studentId=saba223, academicYear=2024, department=Computer Science]
+Member [memberId=2023060566, name=Faiz, email=faiz@yopmail.com, phone=1234567800, membershipDate=1752228059098, memberType=Faculty, borrowingLimit=10, currentBorrowedBooks=0, totalFineAmount=0.0, membershipStatus=ACTIVE, facultyId=f123, department=Civil, designation=Senior Faculty]

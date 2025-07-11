@@ -24,6 +24,11 @@ public class EBook extends Book {
     }
 
     @Override
+    public boolean isAvailable() {
+        return true;
+    }
+
+    @Override
     public String toString() {
         return super.toString() + ", fileFormat=" + fileFormat + ", isDrmProtected=" + isDrmProtected + "]";
     }

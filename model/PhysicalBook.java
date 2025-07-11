@@ -48,6 +48,11 @@ public class PhysicalBook extends Book {
     }
 
     @Override
+    public boolean isAvailable() {
+        return this.availableCopies > 0;
+    }
+
+    @Override
     public String toString() {
         return super.toString() + ", pages=" + pages + ", totalCopies=" + totalCopies + ", availableCopies="
                 + availableCopies + ", reservedCopies=" + reservedCopies + "]";

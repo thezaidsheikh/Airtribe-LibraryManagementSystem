@@ -2,7 +2,10 @@ package main;
 
 import java.util.Scanner;
 
+import service.BookIssueService;
 import service.BookService;
+import service.MemberService;
+import service.ReservationService;
 
 /**
  * Subclass of InvoiceManagementSystem
@@ -10,12 +13,16 @@ import service.BookService;
 public class LibraryManagementMenu {
     Scanner scn = new Scanner(System.in);
     BookService bookService = new BookService();
+    MemberService memberService = new MemberService();
+    ReservationService reservationService = new ReservationService(memberService, bookService);
+    BookIssueService bookIssueService = new BookIssueService(memberService, bookService, reservationService);
 
     /**
      * Sets up the application to show options
      */
     protected void setup() throws Exception {
         this.bookService.loadBooks();
+        this.memberService.loadMembers();
         System.out.println("========= WELCOME TO LIBRARY MANAGEMENT SYSTEM =====================");
         System.out.println("========== KINDLY SELECT THE OPTION ======================\n");
         while (true) {
@@ -84,6 +91,47 @@ public class LibraryManagementMenu {
                     System.out.println("====================== START - SEARCH BOOK ======================\n");
                     bookService.searchBook();
                     System.out.println("====================== END - SEARCH BOOK ======================\n");
+                    break;
+                case "4":
+                    System.out.println("====================== START - VIEW BOOK DETAILS ======================\n");
+                    bookService.viewBookDetails();
+                    System.out.println("====================== END - VIEW BOOK DETAILS ======================\n");
+                    break;
+                case "5":
+                    System.out
+                            .println("====================== START - CHECK BOOK AVAILABILITY ======================\n");
+                    bookService.checkBookAvailability();
+                    System.out.println("====================== END - CHECK BOOK AVAILABILITY ======================\n");
+                    break;
+                case "6":
+                    System.out.println("====================== START - REGISTER MEMBER ======================\n");
+                    memberService.registerMember();
+                    System.out.println("====================== END - REGISTER MEMBER ======================\n");
+                    break;
+                case "7":
+                    System.out.println("====================== START - UPDATE MEMBER INFO ======================\n");
+                    memberService.updateMemberInfo();
+                    System.out.println("====================== END - UPDATE MEMBER INFO ======================\n");
+                    break;
+                case "8":
+                    System.out.println("====================== START - SEARCH MEMBER ======================\n");
+                    memberService.searchMember();
+                    System.out.println("====================== END - SEARCH MEMBER ======================\n");
+                    break;
+                case "9":
+                    System.out.println("====================== START - VIEW MEMBER HISTORY ======================\n");
+                    // memberService.viewMemberHistory();
+                    System.out.println("====================== END - VIEW MEMBER HISTORY ======================\n");
+                    break;
+                case "10":
+                    System.out.println("====================== START - FINE MANAGEMENT ======================\n");
+                    // memberService.fineManagement();
+                    System.out.println("====================== END - FINE MANAGEMENT ======================\n");
+                    break;
+                case "11":
+                    System.out.println("====================== START - ISSUE BOOK ======================\n");
+                    bookIssueService.issueBook();
+                    System.out.println("====================== END - ISSUE BOOK ======================\n");
                     break;
                 case "27":
                     System.out.println("Thank you for using the Library Management System. Goodbye!");

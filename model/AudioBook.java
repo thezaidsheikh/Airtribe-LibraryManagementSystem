@@ -30,6 +30,11 @@ public class AudioBook extends Book {
     }
 
     @Override
+    public boolean isAvailable() {
+        return true;
+    }
+
+    @Override
     public String toString() {
         return super.toString() + ", narratorName=" + narratorName + ", audioFormat=" + audioFormat + ", audioLength="
                 + audioLength + "]";
