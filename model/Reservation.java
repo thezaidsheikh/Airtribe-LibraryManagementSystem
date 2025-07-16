@@ -1,15 +1,17 @@
 package model;
 
+import java.io.Serializable;
+
 import common.utils;
 
-public class Reservation {
+public class Reservation implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private long bookId;
     private long memberId;
     private long reservationDate;
 
-    public Reservation(long bookId, long memberId) {
+    public Reservation(long memberId, long bookId) {
         this.bookId = bookId;
         this.memberId = memberId;
         this.reservationDate = utils.getEpochTime();

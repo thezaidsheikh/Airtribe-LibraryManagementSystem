@@ -1,8 +1,11 @@
 package model;
 
+import java.io.Serializable;
+
+import common.MemberPolicy;
 import common.utils;
 
-public class BookIssue {
+public class BookIssue implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /** Unique identifier for the book issue */
@@ -36,7 +39,7 @@ public class BookIssue {
     public BookIssue(Member member, Book book, double fineAmount) {
         this.issueId = utils.generateId(10);
         this.issueDate = utils.getEpochTime();
-        this.dueDate = utils.getDateAfterDays(issueDate, 5);
+        this.dueDate = utils.getDateAfterDays(issueDate, MemberPolicy.defaultDueDate());
         this.returnDate = 0;
         this.member = member;
         this.book = book;
@@ -167,6 +170,20 @@ public class BookIssue {
      */
     public void setFineAmount(double fineAmount) {
         this.fineAmount = fineAmount;
+    }
+
+    public int getDaysOverdue() {
+        long returnDate = utils.getEpochTime();
+        int graceDay = MemberPolicy.getGracePeriod(this.getMember().getMemberType());
+        if (this.returnDate != 0) {
+            returnDate = this.returnDate;
+        }
+        long finalDueDate = this.getDueDate() + utils.getDateAfterDays(this.getDueDate(), graceDay);
+        return utils.getDayDiff(returnDate, finalDueDate);
+    }
+
+    public void addIssueFine() {
+        this.fineAmount += this.getMember().calculateFine(this.getDaysOverdue());
     }
 
     @Override

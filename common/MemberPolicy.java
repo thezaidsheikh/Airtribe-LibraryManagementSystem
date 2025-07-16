@@ -4,9 +4,9 @@ public class MemberPolicy {
     public static int getBorrowingLimit(String type) {
         switch (type) {
             case "Student":
-                return 5;
+                return 3;
             case "Faculty":
-                return 10;
+                return 5;
             case "Regular":
                 return 2;
             default:
@@ -23,18 +23,31 @@ public class MemberPolicy {
             case "Regular":
                 return 3.0; // Rs. 3 per day
             default:
-                return 2.0;
+                return 3.0;
         }
     }
 
     public static int getGracePeriod(String type) {
         switch (type) {
             case "Student":
-                return 5;
+                return 3;
             case "Faculty":
-                return 10;
+                return 5;
             case "Regular":
                 return 2;
+            default:
+                return 0;
+        }
+    }
+
+    public static int getRenewalLimit(String type) {
+        switch (type) {
+            case "Student":
+                return 2;
+            case "Faculty":
+                return 3;
+            case "Regular":
+                return 1;
             default:
                 return 0;
         }
@@ -49,7 +62,11 @@ public class MemberPolicy {
             case "Regular":
                 return 200.0;
             default:
-                return 100.0;
+                return 200.0;
         }
+    }
+
+    public static int defaultDueDate() {
+        return 5;
     }
 }

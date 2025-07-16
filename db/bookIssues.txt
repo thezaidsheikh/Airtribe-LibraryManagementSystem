@@ -1,0 +1,1 @@
+BookIssue [issueId=1470531146, memberId=1327722966, bookId=975804014, issueDate=1752573107073, dueDate=1753005107073, returnDate=1752573219504, fineAmount=0.0]

@@ -23,6 +23,9 @@ public class LibraryManagementMenu {
     protected void setup() throws Exception {
         this.bookService.loadBooks();
         this.memberService.loadMembers();
+        this.bookIssueService.loadBookIssues();
+        this.reservationService.loadReservationData();
+
         System.out.println("========= WELCOME TO LIBRARY MANAGEMENT SYSTEM =====================");
         System.out.println("========== KINDLY SELECT THE OPTION ======================\n");
         while (true) {
@@ -132,6 +135,21 @@ public class LibraryManagementMenu {
                     System.out.println("====================== START - ISSUE BOOK ======================\n");
                     bookIssueService.issueBook();
                     System.out.println("====================== END - ISSUE BOOK ======================\n");
+                    break;
+                case "12":
+                    System.out.println("====================== START - RETURN BOOK ======================\n");
+                    bookIssueService.returnBook();
+                    System.out.println("====================== END - RETURN BOOK ======================\n");
+                    break;
+                case "13":
+                    System.out.println("====================== START - RENEW BOOK ======================\n");
+                    bookIssueService.renewBook();
+                    System.out.println("====================== END - RENEW BOOK ======================\n");
+                    break;
+                case "14":
+                    System.out.println("====================== START - RESERVE BOOK ======================\n");
+                    reservationService.reserveBook();
+                    System.out.println("====================== END - RESERVE BOOK ======================\n");
                     break;
                 case "27":
                     System.out.println("Thank you for using the Library Management System. Goodbye!");

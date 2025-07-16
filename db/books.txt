@@ -1,3 +1,3 @@
-Book [ISBN=-1331723818, title=The Last Ride, author=Zaid Sheikh, publisher=Leetcom Ltd, publicationYear=2020, category=Fiction, bookType=Physical Book, pages=350, totalCopies=3500, availableCopies=3500, reservedCopies=0]
-Book [ISBN=-1422677787, title=Two Babies, author=Zaid Sheikh, publisher=Friday Ltd, publicationYear=2024, category=Children, bookType=Audio Book, narratorName=John, audioFormat=adv, audioLength=3]
-Book [ISBN=1449425660, title=The Final Destination, author=Copper, publisher=Lee Ltd, publicationYear=2025, category=Drama, bookType=EBook, fileFormat=pdf, isDrmProtected=false]
+Book [ISBN=975804014, title=The Last Ride, author=Zaid Sheikh, publisher=Leetcom Ltd, publicationYear=2020, category=Fiction, bookType=Physical Book, pages=350, totalCopies=5000, availableCopies=4999, reservedCopies=1]
+Book [ISBN=1301889831, title=Human Error, author=John Carl, publisher=2024, publicationYear=2024, category=Non_Fiction, bookType=EBook, fileFormat=pdf, isDrmProtected=false]
+Book [ISBN=384645665, title=Thomas Edition, author=Richard, publisher=JJ Ltd, publicationYear=2023, category=Biography, bookType=Audio Book, narratorName=Schield, audioFormat=adv, audioLength=4]

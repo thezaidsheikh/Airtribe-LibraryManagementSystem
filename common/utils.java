@@ -65,6 +65,13 @@ public class utils {
         return Instant.ofEpochMilli(epochTime).plus(Duration.ofDays(days)).toEpochMilli();
     }
 
+    public static int getDayDiff(long epochMillis1, long epochMillis2) {
+        long millisPerDay = 24 * 60 * 60 * 1000;
+        long diffInMillis = Math.abs(epochMillis2 - epochMillis1);
+        long dayDifference = diffInMillis / millisPerDay;
+        return (int) Math.abs(dayDifference);
+    }
+
     /**
      * Saves a list of objects to a file
      * 
@@ -73,7 +80,6 @@ public class utils {
      */
     public static <T> void saveData(String fileName, List<T> al) throws Exception {
         int extensionIndex = fileName.lastIndexOf(".");
-        System.out.println("EXTENSION INDEX: " + extensionIndex);
         if (extensionIndex == -1) {
             throw new Exception("Invalid file name");
         }

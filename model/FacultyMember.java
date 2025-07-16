@@ -136,37 +136,6 @@ public class FacultyMember extends Member {
     }
 
     /**
-     * Calculates fine for overdue books based on faculty fine policy
-     * Faculty members are charged a lower rate per day for overdue books
-     * 
-     * @param daysOverdue The number of days the book is overdue
-     * @return The fine amount
-     */
-    @Override
-    public double calculateFine(int daysOverdue) {
-        if (daysOverdue <= 0) {
-            return 0.0;
-        }
-
-        double fine = 0.0;
-
-        // Apply grace period for first 5 days
-        if (daysOverdue <= 5) {
-            fine = 0.0;
-        } else {
-            fine = (daysOverdue - 5) * MemberPolicy.getDailyFine(this.memberType);
-        }
-
-        // Apply progressive fine structure
-        if (daysOverdue > 30) {
-            // Additional penalty for books overdue more than 30 days
-            fine += (daysOverdue - 30) * 0.5;
-        }
-
-        return fine;
-    }
-
-    /**
      * Checks if the faculty can renew books
      * Faculty can renew books multiple times if they have no overdue books
      * 
@@ -215,54 +184,6 @@ public class FacultyMember extends Member {
      */
     public int getExtendedBorrowingLimit() {
         return this.getBorrowingLimit() + 5;
-    }
-
-    /**
-     * Gets the faculty member privileges as a formatted string
-     * 
-     * @return String describing faculty privileges
-     */
-    public String getFacultyPrivileges() {
-        StringBuilder privileges = new StringBuilder();
-        privileges.append("Faculty Member Privileges:\n");
-        privileges.append("- Borrowing Limit: ").append(this.getBorrowingLimit()).append(" books\n");
-        privileges.append("- Fine Rate: ₹").append(MemberPolicy.getDailyFine(this.memberType)).append(" per day\n");
-        privileges.append("- Grace Period: 5 days\n");
-        privileges.append("- Renewals: Up to ").append(getMaxRenewals()).append(" times\n");
-        privileges.append("- Max Fine Limit: ₹").append(this.getMaxAllowedFine()).append("\n");
-        privileges.append("- Special Collection Access: ").append(isEligibleForSpecialCollection() ? "Yes" : "No")
-                .append("\n");
-        privileges.append("- Inter-Library Loans: ").append(canRequestInterLibraryLoans() ? "Yes" : "No").append("\n");
-        privileges.append("- Extended Summer Limit: ").append(getExtendedBorrowingLimit()).append(" books\n");
-        return privileges.toString();
-    }
-
-    /**
-     * Returns a detailed string representation of the faculty member
-     * 
-     * @return Detailed string representation
-     */
-    public String getDetailedInfo() {
-        StringBuilder info = new StringBuilder();
-        info.append("=== FACULTY MEMBER DETAILS ===\n");
-        info.append("Member ID: ").append(getMemberId()).append("\n");
-        info.append("Name: ").append(getName()).append("\n");
-        info.append("Email: ").append(getEmail()).append("\n");
-        info.append("Phone: ").append(getPhone()).append("\n");
-        info.append("Faculty ID: ").append(getFacultyId()).append("\n");
-        info.append("Department: ").append(getDepartment()).append("\n");
-        info.append("Designation: ").append(getDesignation()).append("\n");
-        info.append("Membership Date: ").append(getFormattedMembershipDate()).append("\n");
-        info.append("Member Type: ").append(getMemberType()).append("\n");
-        info.append("Borrowing Limit: ").append(getBorrowingLimit()).append("\n");
-        info.append("Current Borrowed Books: ").append(getCurrentBorrowedBooks()).append("\n");
-        info.append("Available Capacity: ").append(getAvailableBorrowingCapacity()).append("\n");
-        info.append("Total Fine Amount: ₹").append(String.format("%.2f", getTotalFineAmount())).append("\n");
-        info.append("Membership Status: ").append(getMembershipStatus()).append("\n");
-        info.append("Can Borrow Books: ").append(canBorrowBooks() ? "Yes" : "No").append("\n");
-        info.append("Can Renew Books: ").append(canRenewBooks() ? "Yes" : "No").append("\n");
-        info.append("Special Collection Access: ").append(isEligibleForSpecialCollection() ? "Yes" : "No").append("\n");
-        return info.toString();
     }
 
     /**

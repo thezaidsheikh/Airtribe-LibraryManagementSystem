@@ -223,7 +223,7 @@ public class MemberService {
             this.members.add(regularMember);
         }
 
-        utils.saveData("./db/members.txt", this.members);
+        this.updateMemberInDatabase();
 
     }
 
@@ -294,7 +294,7 @@ public class MemberService {
         member.setMembershipStatus(MemberStatus.getStatus(memberStatus));
         this.members.set(memberIndex, member);
 
-        utils.saveData("./db/members.txt", this.members);
+        this.updateMemberInDatabase();
     }
 
     /**
@@ -405,7 +405,7 @@ public class MemberService {
         return null;
     }
 
-    protected void updateMemberAndSaveDatabase(Member member) throws Exception {
+    protected void updateMemberInList(Member member) throws Exception {
         int memberIndex = IntStream.range(0, this.members.size())
                 .filter(i -> this.members.get(i).getMemberId() == member.getMemberId())
                 .findFirst().orElse(-1);
@@ -413,6 +413,9 @@ public class MemberService {
             throw new Exception("Member not found");
         }
         this.members.set(memberIndex, member);
+    }
+
+    protected void updateMemberInDatabase() throws Exception {
         utils.saveData("./db/members.txt", this.members);
     }
 

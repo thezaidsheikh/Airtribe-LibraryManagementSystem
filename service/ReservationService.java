@@ -1,5 +1,7 @@
 package service;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -9,11 +11,17 @@ import model.Member;
 import model.PhysicalBook;
 import model.Reservation;
 
-public class ReservationService {
+public class ReservationService implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     Scanner scn = new Scanner(System.in);
     MemberService memberService;
     BookService bookService;
-    List<Reservation> reservations;
+    List<Reservation> reservations = new ArrayList<>();
+
+    public void loadReservationData() throws Exception {
+        this.reservations = utils.loadData("./db/reservations.ser");
+    }
 
     public ReservationService(MemberService memberService, BookService bookService) {
         this.memberService = memberService;
@@ -92,6 +100,10 @@ public class ReservationService {
         this.bookService.updateBookInList(book);
         this.bookService.updateBookInDatabase();
 
+        this.updateReservationInDatabase();
+    }
+
+    protected void updateReservationInDatabase() throws Exception {
         utils.saveData("./db/reservations.txt", this.reservations);
     }
 }

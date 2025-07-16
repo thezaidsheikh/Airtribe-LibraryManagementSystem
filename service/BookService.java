@@ -229,7 +229,7 @@ public class BookService {
             this.books.add(audioBook);
         }
 
-        utils.saveData("./db/books.txt", this.books);
+        this.updateBookInDatabase();
     }
 
     /**
@@ -310,7 +310,7 @@ public class BookService {
         }
 
         this.books.set(bookIndex, book);
-        utils.saveData("./db/books.txt", this.books);
+        this.updateBookInDatabase();
         System.out.println("Book updated successfully");
 
     }

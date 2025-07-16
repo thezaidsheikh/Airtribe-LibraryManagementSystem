@@ -44,6 +44,9 @@ public abstract class Member implements Serializable {
     /** Membership status (Active, Suspended, Expired) */
     protected MemberStatus membershipStatus;
 
+    /** Number of times the member has renewed books */
+    protected int renewalCount;
+
     /**
      * Default constructor for Member class
      */
@@ -52,6 +55,7 @@ public abstract class Member implements Serializable {
         this.currentBorrowedBooks = 0;
         this.totalFineAmount = 0.0;
         this.membershipStatus = MemberStatus.ACTIVE;
+        this.renewalCount = 0;
     }
 
     /**
@@ -73,6 +77,7 @@ public abstract class Member implements Serializable {
         this.currentBorrowedBooks = 0;
         this.totalFineAmount = 0.0;
         this.membershipStatus = MemberStatus.ACTIVE;
+        this.renewalCount = 0;
     }
 
     /**
@@ -184,6 +189,33 @@ public abstract class Member implements Serializable {
     }
 
     /**
+     * Gets the renewal limit for this member
+     * 
+     * @return The renewal limit
+     */
+    public int getRenewalLimit() {
+        return MemberPolicy.getRenewalLimit(this.memberType);
+    }
+
+    /**
+     * Gets the renewal count for this member
+     * 
+     * @return The renewal count
+     */
+    public int getRenewalCount() {
+        return this.renewalCount;
+    }
+
+    /**
+     * Sets the renewal count
+     * 
+     * @param renewalCount The renewal count to set
+     */
+    public void setRenewalCount(int renewalCount) {
+        this.renewalCount = renewalCount;
+    }
+
+    /**
      * Gets the current number of borrowed books
      * 
      * @return The current borrowed books count
@@ -245,7 +277,18 @@ public abstract class Member implements Serializable {
     public boolean canBorrowBooks() {
         return this.currentBorrowedBooks < this.getBorrowingLimit() &&
                 this.membershipStatus == MemberStatus.ACTIVE &&
-                this.totalFineAmount < this.getMaxAllowedFine();
+                this.totalFineAmount <= this.getMaxAllowedFine() &&
+                this.renewalCount <= this.getRenewalLimit();
+    }
+
+    /**
+     * Checks if the member can renew books
+     * 
+     * @return true if member can renew books, false otherwise
+     */
+    public boolean canRenewBooks() {
+        return this.membershipStatus == MemberStatus.ACTIVE && this.totalFineAmount == 0.0
+                && this.renewalCount < this.getRenewalLimit();
     }
 
     /**
@@ -263,7 +306,12 @@ public abstract class Member implements Serializable {
      * @param daysOverdue The number of days the book is overdue
      * @return The fine amount
      */
-    public abstract double calculateFine(int daysOverdue);
+    public double calculateFine(int daysOverdue) {
+        if (daysOverdue <= 0) {
+            return 0.0;
+        }
+        return daysOverdue * MemberPolicy.getDailyFine(this.memberType);
+    };
 
     /**
      * Adds fine to the member's total fine amount
@@ -292,10 +340,19 @@ public abstract class Member implements Serializable {
     }
 
     /**
+     * Increments the renewal count
+     */
+    public void renewBook() {
+        if (this.canBorrowBooks()) {
+            this.renewalCount++;
+        }
+    }
+
+    /**
      * Increments the current borrowed books count
      */
     public void borrowBook() {
-        if (canBorrowBooks()) {
+        if (this.canBorrowBooks()) {
             this.currentBorrowedBooks++;
         }
     }
@@ -337,7 +394,8 @@ public abstract class Member implements Serializable {
     public String toString() {
         return "Member [memberId=" + this.memberId + ", name=" + this.name + ", email=" + this.email + ", phone="
                 + this.phone + ", membershipDate=" + this.getFormattedMembershipDate() + ", memberType="
-                + this.memberType + ", currentBorrowedBooks=" + this.currentBorrowedBooks
-                + ", totalFineAmount=" + this.totalFineAmount + ", membershipStatus=" + this.membershipStatus;
+                + this.memberType + ", currentBorrowedBooks=" + this.currentBorrowedBooks + ", renewalCount="
+                + this.renewalCount + ", totalFineAmount=" + this.totalFineAmount + ", membershipStatus="
+                + this.membershipStatus;
     }
 }
