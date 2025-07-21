@@ -4,6 +4,7 @@ import java.util.Scanner;
 
 import service.BookIssueService;
 import service.BookService;
+import service.ImportExportService;
 import service.MemberService;
 import service.ReservationService;
 
@@ -16,6 +17,8 @@ public class LibraryManagementMenu {
     MemberService memberService = new MemberService();
     ReservationService reservationService = new ReservationService(memberService, bookService);
     BookIssueService bookIssueService = new BookIssueService(memberService, bookService, reservationService);
+    ImportExportService importExportService = new ImportExportService(this.memberService, this.bookService,
+            this.bookIssueService);
 
     /**
      * Sets up the application to show options
@@ -23,7 +26,7 @@ public class LibraryManagementMenu {
     protected void setup() throws Exception {
         this.bookService.loadBooks();
         this.memberService.loadMembers();
-        this.bookIssueService.loadBookIssues();
+        this.bookIssueService.loadBookIssued();
         this.reservationService.loadReservationData();
 
         System.out.println("========= WELCOME TO LIBRARY MANAGEMENT SYSTEM =====================");
@@ -150,6 +153,21 @@ public class LibraryManagementMenu {
                     System.out.println("====================== START - RESERVE BOOK ======================\n");
                     reservationService.reserveBook();
                     System.out.println("====================== END - RESERVE BOOK ======================\n");
+                    break;
+                case "15":
+                    System.out.println("====================== START - VIEW OVERDUE BOOKS ======================\n");
+                    bookIssueService.viewOverDueBooks();
+                    System.out.println("====================== END - VIEW OVERDUE BOOKS ======================\n");
+                    break;
+                case "16":
+                    System.out.println("====================== START - BOOK RECOMMENDATIONS ======================\n");
+                    bookIssueService.bookRecommendations();
+                    System.out.println("====================== END - BOOK RECOMMENDATIONS ======================\n");
+                    break;
+                case "25":
+                    System.out.println("====================== START - IMPORT ======================\n");
+                    importExportService.importData();
+                    System.out.println("====================== END - IMPORT ======================\n");
                     break;
                 case "27":
                     System.out.println("Thank you for using the Library Management System. Goodbye!");

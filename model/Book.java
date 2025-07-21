@@ -53,8 +53,8 @@ public abstract class Book implements Serializable {
      * @param publicationYear the publication year of the book
      * @param category        the category of the book
      */
-    public Book(String title, String author, String publisher, int publicationYear, String bookType,
-            BookCategory category) {
+    public Book(String title, String author, String publisher, int publicationYear, BookCategory category,
+            String bookType) {
         this.ISBN = utils.generateId(13);
         this.title = title;
         this.author = author;
@@ -165,7 +165,7 @@ public abstract class Book implements Serializable {
 
     @Override
     public String toString() {
-        return "Book [ISBN=" + this.ISBN + ", title=" + this.title + ", author=" + this.author + ", publisher="
+        return "ISBN=" + this.ISBN + ", title=" + this.title + ", author=" + this.author + ", publisher="
                 + this.publisher + ", publicationYear=" + this.publicationYear + ", category=" + this.category
                 + ", bookType=" + this.bookType;
     }

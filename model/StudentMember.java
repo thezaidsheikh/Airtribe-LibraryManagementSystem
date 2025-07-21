@@ -1,6 +1,7 @@
 package model;
 
 import common.MemberPolicy;
+import common.MemberStatus;
 
 /**
  * StudentMember class representing a student library member with specific
@@ -43,7 +44,30 @@ public class StudentMember extends Member {
      */
     public StudentMember(String name, String email, long phone,
             String studentId, String academicYear, String department) {
-        super(name, email, phone, "Student");
+        super(name, email, phone, MemberStatus.ACTIVE, "Student");
+        this.studentId = studentId;
+        this.academicYear = academicYear;
+        this.department = department;
+    }
+
+    /**
+     * Parameterized constructor for StudentMember
+     * 
+     * @param memberId         The unique identifier for the member
+     * @param name             The full name of the student
+     * @param email            The email address of the student
+     * @param phone            The phone number of the student
+     * @param studentId        The student ID or enrollment number
+     * @param academicYear     The academic year or semester
+     * @param department       The department or course
+     * @param membershipStatus The membership status of the member
+     */
+    public StudentMember(String name, String email, long phone,
+            String studentId, String academicYear, String department,
+            MemberStatus membershipStatus, long membershipDate, int currentBorrowedBooks, double totalFineAmount,
+            int renewalCount) {
+        super(name, email, phone, membershipStatus, "Student", membershipDate, currentBorrowedBooks, totalFineAmount,
+                renewalCount);
         this.studentId = studentId;
         this.academicYear = academicYear;
         this.department = department;
@@ -132,6 +156,6 @@ public class StudentMember extends Member {
     @Override
     public String toString() {
         return super.toString() + ", studentId=" + studentId + ", academicYear=" + academicYear + ", department="
-                + department + "]";
+                + department;
     }
 }

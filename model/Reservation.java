@@ -31,7 +31,6 @@ public class Reservation implements Serializable {
 
     @Override
     public String toString() {
-        return "Reservation [bookId=" + bookId + ", memberId=" + memberId + ", reservationDate=" + reservationDate
-                + "]";
+        return "bookId=" + bookId + ", memberId=" + memberId + ", reservationDate=" + reservationDate;
     }
 }

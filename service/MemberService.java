@@ -89,7 +89,7 @@ public class MemberService {
                         studentMember.getName(),
                         studentMember.getEmail(),
                         String.valueOf(studentMember.getPhone()),
-                        String.valueOf(studentMember.getMembershipDate()),
+                        String.valueOf(utils.convertEpochToDate(studentMember.getMembershipDate())),
                         studentMember.getMemberType(),
                         String.valueOf(studentMember.getBorrowingLimit()),
                         String.valueOf(studentMember.getCurrentBorrowedBooks()),
@@ -106,7 +106,7 @@ public class MemberService {
                         facultyMember.getName(),
                         facultyMember.getEmail(),
                         String.valueOf(facultyMember.getPhone()),
-                        String.valueOf(facultyMember.getMembershipDate()),
+                        String.valueOf(utils.convertEpochToDate(facultyMember.getMembershipDate())),
                         facultyMember.getMemberType(),
                         String.valueOf(facultyMember.getBorrowingLimit()),
                         String.valueOf(facultyMember.getCurrentBorrowedBooks()),
@@ -120,7 +120,7 @@ public class MemberService {
                         member.getName(),
                         member.getEmail(),
                         String.valueOf(member.getPhone()),
-                        String.valueOf(member.getMembershipDate()),
+                        String.valueOf(utils.convertEpochToDate(member.getMembershipDate())),
                         member.getMemberType(),
                         String.valueOf(member.getBorrowingLimit()),
                         String.valueOf(member.getCurrentBorrowedBooks()),
@@ -419,4 +419,7 @@ public class MemberService {
         utils.saveData("./db/members.txt", this.members);
     }
 
+    protected void replaceMemberList(List<Member> members) {
+        this.members = members;
+    }
 }

@@ -9,9 +9,9 @@ public class AudioBook extends Book {
     private String audioFormat;
     private int audioLength;
 
-    public AudioBook(String title, String author, String publisher, int publicationYear, String narratorName,
-            String audioFormat, int audioLength, BookCategory category) {
-        super(title, author, publisher, publicationYear, "Audio Book", category);
+    public AudioBook(String title, String author, String publisher, int publicationYear, BookCategory category,
+            String narratorName, String audioFormat, int audioLength) {
+        super(title, author, publisher, publicationYear, category, "Audio Book");
         this.narratorName = narratorName;
         this.audioFormat = audioFormat;
         this.audioLength = audioLength;
@@ -37,6 +37,6 @@ public class AudioBook extends Book {
     @Override
     public String toString() {
         return super.toString() + ", narratorName=" + narratorName + ", audioFormat=" + audioFormat + ", audioLength="
-                + audioLength + "]";
+                + audioLength;
     }
 }

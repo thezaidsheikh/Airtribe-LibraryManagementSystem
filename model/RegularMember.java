@@ -1,6 +1,7 @@
 package model;
 
 import common.MemberPolicy;
+import common.MemberStatus;
 
 /**
  * FacultyMember class representing a faculty library member with enhanced
@@ -25,13 +26,26 @@ public class RegularMember extends Member {
     /**
      * Parameterized constructor for RegularMember
      * 
-     * @param memberId The unique identifier for the member
-     * @param name     The full name of the faculty
-     * @param email    The email address of the faculty
-     * @param phone    The phone number of the faculty
+     * @param name  The full name of the faculty
+     * @param email The email address of the faculty
+     * @param phone The phone number of the faculty
      */
     public RegularMember(String name, String email, long phone) {
-        super(name, email, phone, "Regular");
+        super(name, email, phone, MemberStatus.ACTIVE, "Regular");
+    }
+
+    /**
+     * Parameterized constructor for RegularMember
+     * 
+     * @param name             The full name of the faculty
+     * @param email            The email address of the faculty
+     * @param phone            The phone number of the faculty
+     * @param membershipStatus The membership status of the member
+     */
+    public RegularMember(String name, String email, long phone, MemberStatus membershipStatus, long membershipDate,
+            int currentBorrowedBooks, double totalFineAmount, int renewalCount) {
+        super(name, email, phone, membershipStatus, "Regular", membershipDate, currentBorrowedBooks, totalFineAmount,
+                renewalCount);
     }
 
     /**
@@ -51,6 +65,6 @@ public class RegularMember extends Member {
      */
     @Override
     public String toString() {
-        return super.toString() + "]";
+        return super.toString();
     }
 }

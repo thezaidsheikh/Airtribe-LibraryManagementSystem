@@ -10,13 +10,22 @@ public class PhysicalBook extends Book {
     private int availableCopies;
     private int reservedCopies;
 
-    public PhysicalBook(String title, String author, String publisher, int publicationYear, int pages, int totalCopies,
-            BookCategory category) {
-        super(title, author, publisher, publicationYear, "Physical Book", category);
+    public PhysicalBook(String title, String author, String publisher, int publicationYear, BookCategory category,
+            int pages, int totalCopies) {
+        super(title, author, publisher, publicationYear, category, "Physical Book");
         this.pages = pages;
         this.totalCopies = totalCopies;
         this.availableCopies = totalCopies;
         this.reservedCopies = 0;
+    }
+
+    public PhysicalBook(String title, String author, String publisher, int publicationYear, BookCategory category,
+            int pages, int totalCopies, int availableCopies, int reservedCopies) {
+        super(title, author, publisher, publicationYear, category, "Physical Book");
+        this.pages = pages;
+        this.totalCopies = totalCopies;
+        this.availableCopies = availableCopies;
+        this.reservedCopies = reservedCopies;
     }
 
     public int getPages() {
@@ -55,6 +64,6 @@ public class PhysicalBook extends Book {
     @Override
     public String toString() {
         return super.toString() + ", pages=" + pages + ", totalCopies=" + totalCopies + ", availableCopies="
-                + availableCopies + ", reservedCopies=" + reservedCopies + "]";
+                + availableCopies + ", reservedCopies=" + reservedCopies;
     }
 }

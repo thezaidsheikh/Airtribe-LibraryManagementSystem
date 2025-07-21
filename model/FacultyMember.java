@@ -1,6 +1,7 @@
 package model;
 
 import common.MemberPolicy;
+import common.MemberStatus;
 
 /**
  * FacultyMember class representing a faculty library member with enhanced
@@ -44,7 +45,7 @@ public class FacultyMember extends Member {
      */
     public FacultyMember(String name, String email, long phone,
             String facultyId, String department, String designation) {
-        super(name, email, phone, "Faculty");
+        super(name, email, phone, MemberStatus.ACTIVE, "Faculty");
         this.facultyId = facultyId;
         this.department = department;
         this.designation = designation;
@@ -53,19 +54,20 @@ public class FacultyMember extends Member {
     /**
      * Constructor with custom borrowing limit
      * 
-     * @param memberId             The unique identifier for the member
-     * @param name                 The full name of the faculty
-     * @param email                The email address of the faculty
-     * @param phone                The phone number of the faculty
-     * @param facultyId            The faculty ID or employee number
-     * @param department           The department or faculty
-     * @param designation          The designation or position
-     * @param customBorrowingLimit Custom borrowing limit for this faculty
+     * @param memberId         The unique identifier for the member
+     * @param name             The full name of the faculty
+     * @param email            The email address of the faculty
+     * @param phone            The phone number of the faculty
+     * @param facultyId        The faculty ID or employee number
+     * @param department       The department or faculty
+     * @param designation      The designation or position
+     * @param membershipStatus The membership status of the member
      */
     public FacultyMember(String name, String email, long phone,
-            String facultyId, String department, String designation,
-            int customBorrowingLimit) {
-        super(name, email, phone, "Faculty");
+            String facultyId, String department, String designation, MemberStatus membershipStatus,
+            long membershipDate, int currentBorrowedBooks, double totalFineAmount, int renewalCount) {
+        super(name, email, phone, membershipStatus, "Faculty", membershipDate, currentBorrowedBooks,
+                totalFineAmount, renewalCount);
         this.facultyId = facultyId;
         this.department = department;
         this.designation = designation;
@@ -194,6 +196,6 @@ public class FacultyMember extends Member {
     @Override
     public String toString() {
         return super.toString() + ", facultyId=" + facultyId + ", department=" + department + ", designation="
-                + designation + "]";
+                + designation;
     }
 }

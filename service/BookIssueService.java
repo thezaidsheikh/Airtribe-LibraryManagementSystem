@@ -1,8 +1,13 @@
 package service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import common.MemberPolicy;
@@ -18,7 +23,7 @@ public class BookIssueService {
     MemberService memberService;
     BookService bookService;
     ReservationService reservationService;
-    List<BookIssue> bookIssues = new ArrayList<>();
+    List<BookIssue> bookIssued = new ArrayList<>();
 
     /**
      * Constructor to initialize the memberService and bookService
@@ -33,19 +38,70 @@ public class BookIssueService {
         this.reservationService = reservationService;
     }
 
-    public void loadBookIssues() {
-        this.bookIssues = utils.loadData("./db/bookIssues.ser");
+    public void loadBookIssued() {
+        this.bookIssued = utils.loadData("./db/bookIssues.ser");
+    }
+
+    /**
+     * Helper method to display a list of book issued.
+     */
+    private void showIssueList(List<BookIssue> issuedList) {
+        System.out.println("Result -\n");
+        if (issuedList.size() == 0) {
+            System.out.println("Error: No book issues found");
+            System.out.println("=====================================");
+            return;
+        }
+
+        String[] headers = { "BOOK TITLE", "AUTHOR", "ISSUED BY", "TYPE", "ISSUED DATE", "DUE DATE" };
+
+        int[] colWidths = new int[headers.length];
+        for (int i = 0; i < headers.length; i++) {
+            colWidths[i] = headers[i].length();
+        }
+
+        for (BookIssue issuedBook : issuedList) {
+
+            colWidths[0] = Math.max(colWidths[0], issuedBook.getBook().getTitle().length());
+            colWidths[1] = Math.max(colWidths[1], issuedBook.getBook().getAuthor().length());
+            colWidths[2] = Math.max(colWidths[2], issuedBook.getMember().getName().length());
+            colWidths[3] = Math.max(colWidths[3], issuedBook.getMember().getMemberType().length());
+            colWidths[4] = Math.max(colWidths[4], String.valueOf(issuedBook.getIssueDate()).length());
+            colWidths[5] = Math.max(colWidths[5], String.valueOf(issuedBook.getDueDate()).length());
+
+        }
+
+        // Build format string
+        String format = String.format(
+                "%%-%ds  %%-%ds  %%-%ds  %%-%ds  %%-%ds  %%-%ds%n",
+                colWidths[0], colWidths[1], colWidths[2], colWidths[3], colWidths[4], colWidths[5]);
+
+        // Print header
+        System.out.printf(format, (Object[]) headers);
+        System.out.println();
+
+        // Print rows
+        for (BookIssue issue : issuedList) {
+            System.out.printf(format,
+                    issue.getBook().getTitle(),
+                    issue.getBook().getAuthor(),
+                    issue.getMember().getName(),
+                    issue.getMember().getMemberType(),
+                    utils.convertEpochToDate(issue.getIssueDate()),
+                    utils.convertEpochToDate(issue.getDueDate()));
+        }
+        System.out.println("\n===================================== END ISSUE LIST =============================\n");
     }
 
     public BookIssue getBookIssueDetail(long memberId, long bookId) throws Exception {
-        int bookIssueIndex = IntStream.range(0, this.bookIssues.size())
-                .filter(i -> this.bookIssues.get(i).getMember().getMemberId() == memberId
-                        && this.bookIssues.get(i).getBook().getISBN() == bookId)
+        int bookIssueIndex = IntStream.range(0, this.bookIssued.size())
+                .filter(i -> this.bookIssued.get(i).getMember().getMemberId() == memberId
+                        && this.bookIssued.get(i).getBook().getISBN() == bookId)
                 .findFirst().orElse(-1);
         if (bookIssueIndex == -1) {
             return null;
         }
-        return this.bookIssues.get(bookIssueIndex);
+        return this.bookIssued.get(bookIssueIndex);
     }
 
     /**
@@ -93,7 +149,7 @@ public class BookIssueService {
         }
 
         BookIssue bookIssue = new BookIssue(member, book, 0);
-        this.bookIssues.add(bookIssue);
+        this.bookIssued.add(bookIssue);
 
         this.updateBookIssueInDatabase();
 
@@ -205,17 +261,17 @@ public class BookIssueService {
             isReserved = true;
         }
 
-        int bookIssueIndex = IntStream.range(0, this.bookIssues.size())
-                .filter(i -> this.bookIssues.get(i).getMember().getMemberId() == memberId
-                        && this.bookIssues.get(i).getBook().getISBN() == bookId)
+        int bookIssueIndex = IntStream.range(0, this.bookIssued.size())
+                .filter(i -> this.bookIssued.get(i).getMember().getMemberId() == memberId
+                        && this.bookIssued.get(i).getBook().getISBN() == bookId)
                 .findFirst().orElse(-1);
         if (bookIssueIndex == -1) {
             throw new Exception("Book issue not found");
         }
 
-        BookIssue bookIssue = this.bookIssues.get(bookIssueIndex);
+        BookIssue bookIssue = this.bookIssued.get(bookIssueIndex);
         bookIssue.setDueDate(utils.getDateAfterDays(bookIssue.getDueDate(), MemberPolicy.defaultDueDate()));
-        this.bookIssues.set(bookIssueIndex, bookIssue);
+        this.bookIssued.set(bookIssueIndex, bookIssue);
         this.updateBookIssueInDatabase();
 
         member.renewBook();
@@ -230,12 +286,50 @@ public class BookIssueService {
     }
 
     public void updateBookIssueInDatabase() throws Exception {
-        utils.saveData("./db/bookIssues.txt", this.bookIssues);
+        utils.saveData("./db/bookIssues.txt", this.bookIssued);
     }
 
+    /**
+     * /**
+     * Displays a list of books that are overdue (not returned and past their due
+     * date)
+     * 
+     * @throws Exception if there's an error accessing the book issue data
+     */
+
     public void viewOverDueBooks() throws Exception {
-        this.bookIssues.stream()
-                .filter(bookIssue -> bookIssue.getReturnDate() == 0 && bookIssue.getDueDate() < utils.getEpochTime())
-                .forEach(bookIssue -> System.out.println(bookIssue));
+        List<BookIssue> overDueBooks = new ArrayList<>();
+        for (BookIssue issue : this.bookIssued) {
+            if (issue.getReturnDate() == 0 && issue.getDueDate() < utils.getEpochTime()) {
+                overDueBooks.add(issue);
+            }
+        }
+        showIssueList(overDueBooks);
+    }
+
+    public void bookRecommendations() throws Exception {
+        // book issued count by book author
+        List<Book> recommendedBooks = new ArrayList<>();
+
+        // get top 5 authors
+        List<String> topAuthors = this.bookIssued.stream()
+                .collect(Collectors.groupingBy(issue -> issue.getBook().getAuthor(), Collectors.counting()))
+                .entrySet().stream().sorted(Map.Entry.<String, Long>comparingByValue(Comparator.reverseOrder()))
+                .limit(10).map(Map.Entry::getKey).collect(Collectors.toList());
+
+        for (String author : topAuthors) {
+            recommendedBooks.addAll(this.bookService.getBooksByAuthor(author));
+        }
+        // show recommended books
+        this.bookService.showBookList(recommendedBooks);
+    }
+
+    /**
+     * Replaces the list of book issues with the given list
+     * 
+     * @param bookIssued the new list of book issues
+     */
+    protected void replaceBookIssueList(List<BookIssue> bookIssued) {
+        this.bookIssued = bookIssued;
     }
 }

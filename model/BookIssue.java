@@ -47,6 +47,26 @@ public class BookIssue implements Serializable {
     }
 
     /**
+     * Constructs a BookIssue instance with the given member, book, and fine amount.
+     * 
+     * @param member
+     * @param book
+     * @param fineAmount
+     * @param issueDate
+     * @param dueDate
+     * @param returnDate
+     */
+    public BookIssue(Member member, Book book, double fineAmount, long issueDate, long dueDate, long returnDate) {
+        this.issueId = utils.generateId(10);
+        this.issueDate = issueDate;
+        this.dueDate = dueDate;
+        this.returnDate = returnDate;
+        this.member = member;
+        this.book = book;
+        this.fineAmount = fineAmount;
+    }
+
+    /**
      * Gets the issue ID
      * 
      * @return the issue ID
@@ -188,8 +208,8 @@ public class BookIssue implements Serializable {
 
     @Override
     public String toString() {
-        return "BookIssue [issueId=" + issueId + ", memberId=" + member.getMemberId() + ", bookId=" + book.getISBN()
+        return "issueId=" + issueId + ", memberId=" + member.getMemberId() + ", bookId=" + book.getISBN()
                 + ", issueDate=" + issueDate + ", dueDate=" + dueDate + ", returnDate=" + returnDate
-                + ", fineAmount=" + fineAmount + "]";
+                + ", fineAmount=" + fineAmount;
     }
 }

@@ -61,12 +61,13 @@ public abstract class Member implements Serializable {
     /**
      * Parameterized constructor for Member class
      * 
-     * @param name       The full name of the member
-     * @param email      The email address of the member
-     * @param phone      The phone number of the member
-     * @param memberType The type of member (Student, Faculty, General Public)
+     * @param name             The full name of the member
+     * @param email            The email address of the member
+     * @param phone            The phone number of the member
+     * @param membershipStatus The membership status of the member
+     * @param memberType       The type of member (Student, Faculty, General Public)
      */
-    public Member(String name, String email, long phone,
+    public Member(String name, String email, long phone, MemberStatus membershipStatus,
             String memberType) {
         this.memberId = utils.generateId(10);
         this.name = name;
@@ -76,8 +77,32 @@ public abstract class Member implements Serializable {
         this.membershipDate = utils.getEpochTime();
         this.currentBorrowedBooks = 0;
         this.totalFineAmount = 0.0;
-        this.membershipStatus = MemberStatus.ACTIVE;
+        this.membershipStatus = membershipStatus;
         this.renewalCount = 0;
+    }
+
+    /**
+     * Parameterized constructor for Member class
+     * 
+     * @param name             The full name of the member
+     * @param email            The email address of the member
+     * @param phone            The phone number of the member
+     * @param membershipStatus The membership status of the member
+     * @param memberType       The type of member (Student, Faculty, General Public)
+     */
+    public Member(String name, String email, long phone, MemberStatus membershipStatus,
+            String memberType, long membershipDate, int currentBorrowedBooks, double totalFineAmount,
+            int renewalCount) {
+        this.memberId = utils.generateId(10);
+        this.name = name;
+        this.email = email;
+        this.phone = phone;
+        this.memberType = memberType;
+        this.membershipDate = membershipDate;
+        this.currentBorrowedBooks = currentBorrowedBooks;
+        this.totalFineAmount = totalFineAmount;
+        this.membershipStatus = membershipStatus;
+        this.renewalCount = renewalCount;
     }
 
     /**
@@ -367,16 +392,6 @@ public abstract class Member implements Serializable {
     }
 
     /**
-     * Gets the membership date as a formatted string
-     * 
-     * @return The formatted membership date
-     */
-    public String getFormattedMembershipDate() {
-        LocalDate date = utils.convertEpochToDate(this.membershipDate);
-        return date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-    }
-
-    /**
      * Gets the available borrowing capacity
      * 
      * @return The number of books that can still be borrowed
@@ -392,8 +407,8 @@ public abstract class Member implements Serializable {
      */
     @Override
     public String toString() {
-        return "Member [memberId=" + this.memberId + ", name=" + this.name + ", email=" + this.email + ", phone="
-                + this.phone + ", membershipDate=" + this.getFormattedMembershipDate() + ", memberType="
+        return "memberId=" + this.memberId + ", name=" + this.name + ", email=" + this.email + ", phone="
+                + this.phone + ", membershipDate=" + this.membershipDate + ", memberType="
                 + this.memberType + ", currentBorrowedBooks=" + this.currentBorrowedBooks + ", renewalCount="
                 + this.renewalCount + ", totalFineAmount=" + this.totalFineAmount + ", membershipStatus="
                 + this.membershipStatus;

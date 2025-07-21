@@ -1,8 +1,11 @@
 package service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import common.BookCategory;
@@ -10,6 +13,7 @@ import common.utils;
 import model.AudioBook;
 import model.Book;
 import model.EBook;
+import model.Member;
 import model.PhysicalBook;
 
 public class BookService {
@@ -23,7 +27,7 @@ public class BookService {
     /**
      * Helper method to display a list of books.
      */
-    private void showBookList(List<Book> booksList) {
+    protected void showBookList(List<Book> booksList) {
         System.out.println("Result -\n");
         if (booksList.size() == 0) {
             System.out.println("Error: No books found");
@@ -140,10 +144,10 @@ public class BookService {
         System.out.println(
                 "1. Fiction\n2. Non-Fiction\n3. Science\n4. Technology\n5. History\n6. Biography\n7. Self-Help\n8. Children\n9. Poetry\n10. Drama");
         int category = Integer.parseInt(scn.nextLine());
-        if (category < 1 || category > 10 || BookCategory.getCategory(category) == null) {
+        if (category < 1 || category > 10 || BookCategory.getCategoryByNumber(category) == null) {
             throw new Exception("Invalid book category");
         }
-        BookCategory bookCategory = BookCategory.getCategory(category);
+        BookCategory bookCategory = BookCategory.getCategoryByNumber(category);
         System.out.println("Book category: " + bookCategory);
 
         System.out.print("Enter the book author. (mandatory - max 30 characters): ");
@@ -183,8 +187,8 @@ public class BookService {
                 throw new Exception("Invalid book total copies");
             }
 
-            PhysicalBook physicalBook = new PhysicalBook(title, author, publisher, publicationYear, pages, totalCopies,
-                    bookCategory);
+            PhysicalBook physicalBook = new PhysicalBook(title, author, publisher, publicationYear, bookCategory,
+                    pages, totalCopies);
             this.books.add(physicalBook);
         }
 
@@ -201,7 +205,7 @@ public class BookService {
                 throw new Exception("Invalid book drm protected");
             }
 
-            EBook eBook = new EBook(title, author, publisher, publicationYear, fileFormat, drmProtected, bookCategory);
+            EBook eBook = new EBook(title, author, publisher, publicationYear, bookCategory, fileFormat, drmProtected);
             this.books.add(eBook);
         }
 
@@ -224,8 +228,8 @@ public class BookService {
                 throw new Exception("Invalid book audio length");
             }
 
-            AudioBook audioBook = new AudioBook(title, author, publisher, publicationYear, narratorName, audioFormat,
-                    audioLength, bookCategory);
+            AudioBook audioBook = new AudioBook(title, author, publisher, publicationYear, bookCategory, narratorName,
+                    audioFormat, audioLength);
             this.books.add(audioBook);
         }
 
@@ -494,5 +498,14 @@ public class BookService {
 
     protected void updateBookInDatabase() throws Exception {
         utils.saveData("./db/books.txt", this.books);
+    }
+
+    protected List<Book> getBooksByAuthor(String author) {
+        return this.books.stream().filter(book -> book.getAuthor().equalsIgnoreCase(author))
+                .collect(Collectors.toList());
+    }
+
+    protected void replaceBookList(List<Book> books) {
+        this.books = books;
     }
 }
