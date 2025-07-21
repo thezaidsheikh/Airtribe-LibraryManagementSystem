@@ -364,4 +364,4 @@ A comprehensive Java-based Library Management System that provides complete func
 - **Memory Management**: Lazy loading and efficient data structures
 - **Scalable Design**: Architecture supports large datasets and concurrent operations
 
-This Library Management System provides a complete solution for modern library operations with robust data management, flexible policies, and comprehensive reporting capabilities.
+This Library Management System provides a complete solution for modern library operations with robust data management, flexible policies, and comprehensive reporting capabilities..
