@@ -1,12 +1,12 @@
 package service;
 
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -205,7 +205,8 @@ public class BookIssueService {
 
         bookIssue.setReturnDate(utils.getEpochTime());
         int daysOverdue = bookIssue.getDaysOverdue();
-        member.calculateFine(daysOverdue);
+        double fineAmount = member.calculateFine(daysOverdue);
+        bookIssue.setFineAmount(bookIssue.getFineAmount() + fineAmount);
         this.updateBookIssueInDatabase();
 
         // update book
@@ -322,6 +323,113 @@ public class BookIssueService {
         }
         // show recommended books
         this.bookService.showBookList(recommendedBooks);
+    }
+
+    protected void showPopularBooks(List<Map<String, Object>> topBooks) {
+        System.out.println("Result -\n");
+        if (topBooks.size() == 0) {
+            System.out.println("Error: No books found");
+            System.out.println("=====================================");
+            return;
+        }
+
+        String[] headers = { "TITLE", "ISSUED COUNT", "RESERVED COUNT" };
+
+        int[] colWidths = new int[headers.length];
+        for (int i = 0; i < headers.length; i++) {
+            colWidths[i] = headers[i].length();
+        }
+
+        for (Map<String, Object> book : topBooks) {
+            colWidths[0] = Math.max(colWidths[0], book.get("Title").toString().length());
+            colWidths[1] = Math.max(colWidths[1], String.valueOf(book.get("issuedCount")).length());
+            colWidths[2] = Math.max(colWidths[2], String.valueOf(book.get("reservedCount")).length());
+        }
+
+        // Build format string
+        String format = String.format(
+                "%%-%ds  %%-%ds  %%-%ds%n",
+                colWidths[0], colWidths[1], colWidths[2]);
+
+        // Print header
+        System.out.printf(format, (Object[]) headers);
+        System.out.println();
+
+        // Print rows
+        for (Map<String, Object> book : topBooks) {
+            System.out.printf(format, book.get("Title"), book.get("issuedCount"), book.get("reservedCount"));
+        }
+        System.out.println("=====================================");
+    }
+
+    public void getPopularBooks() throws Exception {
+        // book issued count by book author
+        List<Book> popularBooks = new ArrayList<>();
+
+        // get top 5 books with title and issuedCount
+        List<Map<String, Object>> topBooks = this.bookIssued.stream()
+                .collect(Collectors.groupingBy(issue -> issue.getBook().getISBN(), Collectors.counting()))
+                .entrySet().stream()
+                .sorted(Map.Entry.<Long, Long>comparingByValue(Comparator.reverseOrder()))
+                .limit(5)
+                .map(entry -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("Title", this.bookService.getBookById(entry.getKey()).getTitle());
+                    map.put("issuedCount", entry.getValue());
+                    map.put("reservedCount",
+                            ((PhysicalBook) this.bookService.getBookById(entry.getKey())).getReservedCopies());
+                    return map;
+                })
+                .collect(Collectors.toList());
+
+        // show recommended books
+        showPopularBooks(topBooks);
+    }
+
+    public void advancedSearch() throws Exception {
+        System.out.println("1.Search Book by multiple Author - (use comma to separate authors)");
+        System.out.println("2.Filter available books by category and publication year");
+        System.out.println("3.Members with overdue books");
+        String value = scn.nextLine().split("\\s+")[0];
+        switch (value) {
+            case "1":
+                bookService.searchBookByMultipleAuthor();
+                break;
+            case "2":
+                bookService.filterAvailableBooksByCategoryAndPublicationYear();
+                break;
+            case "3":
+                membersWithOverDueBooks();
+                break;
+            default:
+                System.out.println("Invalid choice");
+                break;
+        }
+    }
+
+    public void membersWithOverDueBooks() throws Exception {
+        List<BookIssue> members = new ArrayList<>();
+        for (BookIssue issue : this.bookIssued) {
+            if (issue.getReturnDate() == 0 && issue.getDueDate() < utils.getEpochTime()) {
+                members.add(issue);
+            }
+        }
+        showIssueList(members);
+    }
+
+    public void borrowingReports() throws Exception {
+        Map<YearMonth, Long> monthlyBorrows = this.bookIssued.stream()
+                .collect(Collectors.groupingBy(
+                        issue -> YearMonth.from(utils.convertEpochToDate(issue.getIssueDate())),
+                        Collectors.counting()));
+        System.out.println(monthlyBorrows);
+    }
+
+    public void fineCollectionReports() throws Exception {
+        double totalFines = this.bookIssued.stream()
+                .mapToDouble(issue -> issue.getFineAmount())
+                .sum();
+        System.out.println(totalFines);
     }
 
     /**

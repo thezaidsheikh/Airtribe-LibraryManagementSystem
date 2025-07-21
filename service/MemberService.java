@@ -396,6 +396,12 @@ public class MemberService {
         showMemberList(member);
     }
 
+    /**
+     * Retrieves a member by their unique member ID.
+     *
+     * @param memberId the unique identifier of the member to retrieve
+     * @return the Member object if found, null otherwise
+     */
     protected Member getMemberById(long memberId) {
         for (Member m : this.members) {
             if (m.getMemberId() == memberId) {
@@ -405,6 +411,12 @@ public class MemberService {
         return null;
     }
 
+    /**
+     * Updates a member's information in the in-memory list of members.
+     *
+     * @param member the Member object with updated information
+     * @throws Exception if the member is not found in the list
+     */
     protected void updateMemberInList(Member member) throws Exception {
         int memberIndex = IntStream.range(0, this.members.size())
                 .filter(i -> this.members.get(i).getMemberId() == member.getMemberId())
@@ -415,10 +427,21 @@ public class MemberService {
         this.members.set(memberIndex, member);
     }
 
+    /**
+     * Saves the current list of members to the database file.
+     * The members are serialized and saved to './db/members.txt'.
+     *
+     * @throws Exception if there is an error during the save operation
+     */
     protected void updateMemberInDatabase() throws Exception {
         utils.saveData("./db/members.txt", this.members);
     }
 
+    /**
+     * Replaces the list of members with the given list
+     * 
+     * @param members the new list of members
+     */
     protected void replaceMemberList(List<Member> members) {
         this.members = members;
     }

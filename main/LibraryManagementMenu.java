@@ -164,6 +164,46 @@ public class LibraryManagementMenu {
                     bookIssueService.bookRecommendations();
                     System.out.println("====================== END - BOOK RECOMMENDATIONS ======================\n");
                     break;
+                case "17":
+                    System.out.println("====================== START - ADVANCED SEARCH ======================\n");
+                    bookIssueService.advancedSearch();
+                    System.out.println("====================== END - ADVANCED SEARCH ======================\n");
+                    break;
+                case "18":
+                    System.out.println("====================== START - POPULAR BOOKS ======================\n");
+                    bookIssueService.getPopularBooks();
+                    System.out.println("====================== END - POPULAR BOOKS ======================\n");
+                    break;
+                case "19":
+                    System.out.println("====================== START - MEMBER ANALYTICS ======================\n");
+                    // bookIssueService.getMemberAnalytics();
+                    System.out.println("====================== END - MEMBER ANALYTICS ======================\n");
+                    break;
+                case "20":
+                    System.out.println("====================== START - BORROWING REPORTS ======================\n");
+                    bookIssueService.borrowingReports();
+                    System.out.println("====================== END - BORROWING REPORTS ======================\n");
+                    break;
+                case "21":
+                    System.out
+                            .println("====================== START - FINE COLLECTION REPORTS ======================\n");
+                    bookIssueService.fineCollectionReports();
+                    System.out.println("====================== END - FINE COLLECTION REPORTS ======================\n");
+                    break;
+                case "22":
+                    System.out.println(
+                            "====================== START - BOOK POPULARITY ANALYSIS ======================\n");
+                    bookIssueService.getPopularBooks();
+                    System.out
+                            .println("====================== END - BOOK POPULARITY ANALYSIS ======================\n");
+                    break;
+                case "23":
+                    System.out.println(
+                            "====================== START - MEMBER ENGAGEMENT REPORTS ======================\n");
+                    // bookIssueService.memberEngagementReports();
+                    System.out
+                            .println("====================== END - MEMBER ENGAGEMENT REPORTS ======================\n");
+                    break;
                 case "25":
                     System.out.println("====================== START - IMPORT ======================\n");
                     importExportService.importData();

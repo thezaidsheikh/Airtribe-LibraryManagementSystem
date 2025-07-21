@@ -1,6 +1,7 @@
 package service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -507,5 +508,37 @@ public class BookService {
 
     protected void replaceBookList(List<Book> books) {
         this.books = books;
+    }
+
+    protected void searchBookByMultipleAuthor() throws Exception {
+        System.out.print("Enter book authors: ");
+        String authorNames = scn.nextLine();
+        if (authorNames.isEmpty()) {
+            throw new Exception("Invalid book author");
+        }
+        List<String> authors = Arrays.asList(authorNames.split(","));
+        List<Book> result = this.books.stream()
+                .filter(book -> authors.stream().anyMatch(author -> book.getAuthor().contains(author)))
+                .collect(Collectors.toList());
+        showBookList(result);
+    }
+
+    protected void filterAvailableBooksByCategoryAndPublicationYear() throws Exception {
+        System.out.print(
+                "Enter book category - (Fiction, Non_Fiction, Science, Technology, History, Biography, Self_Help, Children, Poetry, Drama): ");
+        String category = scn.nextLine();
+        if (category.isEmpty() && BookCategory.getCategoryByName(category) == null) {
+            throw new Exception("Invalid book category");
+        }
+        System.out.print("Enter book publication year: ");
+        String publicationYear = scn.nextLine();
+        if (publicationYear.isEmpty()) {
+            throw new Exception("Invalid book publication year");
+        }
+        List<Book> result = this.books.stream()
+                .filter(book -> book.getCategory().name().equalsIgnoreCase(category))
+                .filter(book -> book.getPublicationYear() == Integer.parseInt(publicationYear))
+                .collect(Collectors.toList());
+        showBookList(result);
     }
 }
