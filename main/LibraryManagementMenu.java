@@ -9,19 +9,66 @@ import service.MemberService;
 import service.ReservationService;
 
 /**
- * Subclass of InvoiceManagementSystem
+ * The main menu and user interface for the Library Management System.
+ * This class provides a text-based interface for users to interact with
+ * various library management features including book operations, member
+ * management,
+ * borrowing, reservations, and system administration.
+ * 
+ * <p>
+ * The menu is organized into several categories:
+ * <ul>
+ * <li>Book Operations (1-5)</li>
+ * <li>Member Operations (6-10)</li>
+ * <li>Borrowing Operations (11-15)</li>
+ * <li>Advanced Features (16-19)</li>
+ * <li>Reports & Analytics (20-23)</li>
+ * <li>System Operations (24-26)</li>
+ * </ul>
+ * </p>
+ * 
+ * @author Library Management System Team
+ * @version 1.0
+ * @see LibraryManagementSystem
  */
 public class LibraryManagementMenu {
+    /** Scanner object for reading user input from the console */
     Scanner scn = new Scanner(System.in);
+
+    /** Service for handling book-related operations */
     BookService bookService = new BookService();
+
+    /** Service for handling member-related operations */
     MemberService memberService = new MemberService();
+
+    /** Service for managing book reservations */
     ReservationService reservationService = new ReservationService(memberService, bookService);
+
+    /** Service for handling book issuing and returns */
     BookIssueService bookIssueService = new BookIssueService(memberService, bookService, reservationService);
+
+    /** Service for importing and exporting system data */
     ImportExportService importExportService = new ImportExportService(this.memberService, this.bookService,
             this.bookIssueService);
 
     /**
-     * Sets up the application to show options
+     * Initializes the Library Management System and displays the main menu.
+     * This method loads all necessary data and enters the main menu loop,
+     * processing user input until the application is terminated.
+     * 
+     * <p>
+     * The setup process includes:
+     * <ol>
+     * <li>Loading book data from storage</li>
+     * <li>Loading member data from storage</li>
+     * <li>Loading book issue records</li>
+     * <li>Loading reservation data</li>
+     * <li>Displaying the main menu interface</li>
+     * </ol>
+     * </p>
+     * 
+     * @throws Exception if there is an error loading initial data or processing
+     *                   user input
      */
     protected void setup() throws Exception {
         this.bookService.loadBooks();
@@ -126,7 +173,7 @@ public class LibraryManagementMenu {
                     break;
                 case "9":
                     System.out.println("====================== START - VIEW MEMBER HISTORY ======================\n");
-                    // memberService.viewMemberHistory();
+                    memberService.viewMemberHistory();
                     System.out.println("====================== END - VIEW MEMBER HISTORY ======================\n");
                     break;
                 case "10":

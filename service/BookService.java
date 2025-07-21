@@ -2,9 +2,7 @@ package service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -14,19 +12,58 @@ import common.utils;
 import model.AudioBook;
 import model.Book;
 import model.EBook;
-import model.Member;
 import model.PhysicalBook;
 
+/**
+ * Service class for managing books in the library management system.
+ * <p>
+ * This class provides functionality to add, update, search, and manage books
+ * of different types (Physical, E-Book, Audio Book). It handles the business
+ * logic for book-related operations and maintains the book collection.
+ *
+ * @author Library Management System
+ * @version 1.0
+ * @since 2023-01-01
+ * @see Book
+ * @see PhysicalBook
+ * @see EBook
+ * @see AudioBook
+ */
 public class BookService {
-    Scanner scn = new Scanner(System.in);
-    List<Book> books = new ArrayList<>();
+    /** Scanner instance for reading user input */
+    private Scanner scn = new Scanner(System.in);
+    
+    /** List to store all books in the library */
+    private List<Book> books = new ArrayList<>();
 
+    /**
+     * Loads book data from persistent storage.
+     * <p>
+     * This method reads book data from the serialized file located at "./db/books.ser"
+     * and populates the internal books list. If the file doesn't exist or is empty,
+     * the books list will be initialized as an empty list.
+     * 
+     * @see utils#loadData(String)
+     */
     public void loadBooks() {
         this.books = utils.loadData("./db/books.ser");
     }
 
     /**
      * Helper method to display a list of books.
+     */
+    /**
+     * Displays a formatted list of books in a tabular format.
+     * <p>
+     * The table includes different columns based on the book type (Physical, E-Book, Audio Book).
+     * For each book, relevant details are displayed in a properly formatted manner.
+     *
+     * @param booksList The list of books to display (can be empty)
+     * 
+     * @see Book
+     * @see PhysicalBook
+     * @see EBook
+     * @see AudioBook
      */
     protected void showBookList(List<Book> booksList) {
         System.out.println("Result -\n");
@@ -133,7 +170,21 @@ public class BookService {
         System.out.println("\n===================================== END BOOK LIST =============================\n");
     }
 
-    // Add a new book
+    /**
+     * Adds a new book to the library collection.
+     * <p>
+     * This interactive method prompts the user to enter book details and creates
+     * the appropriate book type (Physical, E-Book, or Audio Book) based on user input.
+     * The book is then added to the internal collection and persisted to storage.
+     *
+     * @throws Exception If any validation fails or an error occurs during the operation
+     * @throws NumberFormatException If numeric input is not in the correct format
+     * 
+     * @see PhysicalBook
+     * @see EBook
+     * @see AudioBook
+     * @see #updateBookInDatabase()
+     */
     public void addBook() throws Exception {
         System.out.print("Enter the book title. (mandatory - max 30 characters): ");
         String title = scn.nextLine();
@@ -238,9 +289,17 @@ public class BookService {
     }
 
     /**
-     * Updates a book in the library management system.
+     * Updates an existing book's information in the library collection.
+     * <p>
+     * This method allows updating various attributes of a book identified by its ISBN.
+     * Only non-empty fields provided by the user will be updated. The changes are
+     * then persisted to storage.
+     *
+     * @throws Exception If the book is not found, validation fails, or any other error occurs
+     * @throws NumberFormatException If numeric input is not in the correct format
      * 
-     * @throws Exception if the book is not found or any other error occurs
+     * @see #getBookById(long)
+     * @see #updateBookInDatabase()
      */
     public void updateBook() throws Exception {
         System.out.print("Enter book ISBN number: ");
@@ -321,9 +380,24 @@ public class BookService {
     }
 
     /**
-     * Searches a book in the library management system.
+     * Provides an interactive menu for searching books by different criteria.
+     * <p>
+     * This method displays a menu with options to search books by:
+     * 1. ISBN
+     * 2. Title
+     * 3. Author
+     * 4. Multiple authors
+     * 5. Category and publication year
      * 
-     * @throws Exception if any error occurs
+     * Based on user selection, it calls the appropriate search method.
+     *
+     * @throws Exception If an I/O error occurs during user input
+     * 
+     * @see #searchBookByISBN()
+     * @see #searchBookByTitle()
+     * @see #searchBookByAuthor()
+     * @see #searchBookByMultipleAuthor()
+     * @see #filterAvailableBooksByCategoryAndPublicationYear()
      */
     public void searchBook() throws Exception {
         System.out.println("1.Search Book by ISBN");
@@ -347,9 +421,16 @@ public class BookService {
     }
 
     /**
-     * Searches a book by ISBN in the library management system.
+     * Searches for a book by its ISBN number.
+     * <p>
+     * This method prompts the user to enter an ISBN and displays the matching book
+     * if found. The search is case-insensitive and performs an exact match on the ISBN.
+     *
+     * @throws Exception If the input format is invalid or no book is found
+     * @throws NumberFormatException If the input cannot be parsed as a long
      * 
-     * @throws Exception if any error occurs
+     * @see #getBookById(long)
+     * @see #showBookList(List)
      */
     public void searchBookByISBN() throws Exception {
         System.out.print("Enter book ISBN number: ");
@@ -372,9 +453,14 @@ public class BookService {
     }
 
     /**
-     * Searches a book by title in the library management system.
+     * Searches for books by title.
+     * <p>
+     * This method performs a case-insensitive partial match search on book titles.
+     * It displays all books whose titles contain the search term.
+     *
+     * @throws Exception If the input is empty or no matching books are found
      * 
-     * @throws Exception if any error occurs
+     * @see #showBookList(List)
      */
     public void searchBookByTitle() throws Exception {
         System.out.print("Enter book title: ");
@@ -396,9 +482,15 @@ public class BookService {
     }
 
     /**
-     * Searches a book by author in the library management system.
+     * Searches for books by author.
+     * <p>
+     * This method performs a case-insensitive partial match search on book authors.
+     * It displays all books whose authors' names contain the search term.
+     *
+     * @throws Exception If the input is empty or no matching books are found
      * 
-     * @throws Exception if any error occurs
+     * @see #getBooksByAuthor(String)
+     * @see #showBookList(List)
      */
     public void searchBookByAuthor() throws Exception {
         System.out.print("Enter book author: ");
@@ -420,9 +512,16 @@ public class BookService {
     }
 
     /**
-     * Views the details of a book in the library management system.
+     * Displays detailed information about a specific book.
+     * <p>
+     * This method prompts the user for a book ISBN and displays all available
+     * details for that book, including type-specific information.
+     *
+     * @throws Exception If the book is not found or an error occurs
+     * @throws NumberFormatException If the input cannot be parsed as a long
      * 
-     * @throws Exception if any error occurs
+     * @see #getBookById(long)
+     * @see #showBookList(List)
      */
     public void viewBookDetails() throws Exception {
         System.out.print("Enter book ISBN number: ");
@@ -445,9 +544,17 @@ public class BookService {
     }
 
     /**
-     * Checks the availability of a book in the library management system.
+     * Checks and displays the availability status of a book.
+     * <p>
+     * This method checks if a book is available for borrowing based on its type:
+     * - For physical books: Checks available copies > 0
+     * - For e-books/audio books: Always available unless marked otherwise
+     *
+     * @throws Exception If the book is not found or an error occurs
+     * @throws NumberFormatException If the input cannot be parsed as a long
      * 
-     * @throws Exception if any error occurs
+     * @see #getBookById(long)
+     * @see PhysicalBook#getAvailableCopies()
      */
     public void checkBookAvailability() throws Exception {
         System.out.print("Enter book ISBN number: ");
@@ -478,6 +585,14 @@ public class BookService {
         }
     }
 
+    /**
+     * Retrieves a book from the collection by its ISBN.
+     *
+     * @param isbn The ISBN of the book to retrieve
+     * @return The book with the matching ISBN, or null if not found
+     * 
+     * @see Book#getISBN()
+     */
     protected Book getBookById(long isbn) {
         for (Book b : this.books) {
             if (b.getISBN() == isbn) {
@@ -487,30 +602,87 @@ public class BookService {
         return null;
     }
 
+    /**
+     * Updates a book in the internal books list.
+     * <p>
+     * If a book with the same ISBN exists in the list, it will be updated.
+     * If not, the book will be added to the list.
+     *
+     * @param book The book to update or add
+     * @throws Exception If the book is not found or an error occurs during update
+     * 
+     * @see #updateBookInDatabase()
+     */
     protected void updateBookInList(Book book) throws Exception {
         int bookIndex = IntStream.range(0, this.books.size())
                 .filter(i -> this.books.get(i).getISBN() == book.getISBN())
-                .findFirst().orElse(-1);
+                .findFirst()
+                .orElse(-1);
         if (bookIndex == -1) {
             throw new Exception("Book not found");
         }
         this.books.set(bookIndex, book);
     }
 
+    /**
+     * Saves the current book collection to persistent storage.
+     * <p>
+     * This method serializes the current list of books and saves it to
+     * "./db/books.ser". It should be called after any modifications to
+     * the book collection to ensure data persistence.
+     *
+     * @throws Exception If an error occurs during file I/O operations
+     * @see utils#saveData(String, Object)
+     */
     protected void updateBookInDatabase() throws Exception {
-        utils.saveData("./db/books.txt", this.books);
+        try {
+            utils.saveData("./db/books.ser", this.books);
+        } catch (Exception e) {
+            throw new Exception("Failed to save book data: " + e.getMessage(), e);
+        }
     }
 
+    /**
+     * Retrieves all books by a specific author.
+     *
+     * @param author The name of the author to search for (case-insensitive)
+     * @return A list of books written by the specified author, or an empty list if none found
+     * 
+     * @see Book#getAuthor()
+     * @see String#toLowerCase()
+     * @see String#contains(CharSequence)
+     */
     protected List<Book> getBooksByAuthor(String author) {
         return this.books.stream().filter(book -> book.getAuthor().equalsIgnoreCase(author))
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Replaces the current book collection with a new list of books.
+     * <p>
+     * This method is primarily used for loading books from persistent storage
+     * or restoring from a backup.
+     *
+     * @param books The new list of books to use
+     * 
+     * @see #loadBooks()
+     */
     protected void replaceBookList(List<Book> books) {
         this.books = books;
     }
 
-    protected void searchBookByMultipleAuthor() throws Exception {
+    /**
+     * Searches for books by multiple authors.
+     * <p>
+     * This method allows searching for books written by any of the specified authors.
+     * The search is case-insensitive and performs partial matches on author names.
+     *
+     * @throws Exception If no authors are provided or no matching books are found
+     * 
+     * @see #getBooksByAuthor(String)
+     * @see #showBookList(List)
+     */
+    public void searchBookByMultipleAuthor() throws Exception {
         System.out.print("Enter book authors: ");
         String authorNames = scn.nextLine();
         if (authorNames.isEmpty()) {
@@ -523,6 +695,17 @@ public class BookService {
         showBookList(result);
     }
 
+    /**
+     * Filters and displays available books by category and publication year range.
+     * <p>
+     * This method prompts the user to select a book category and enter a range of
+     * publication years, then displays all available books that match the criteria.
+     *
+     * @throws Exception If invalid input is provided or no matching books are found
+     * 
+     * @see BookCategory
+     * @see #showBookList(List)
+     */
     protected void filterAvailableBooksByCategoryAndPublicationYear() throws Exception {
         System.out.print(
                 "Enter book category - (Fiction, Non_Fiction, Science, Technology, History, Biography, Self_Help, Children, Poetry, Drama): ");

@@ -1,6 +1,81 @@
-# Project
+# Library Management System
 
-A comprehensive Library Management System built in Java that provides complete functionality for managing books, members, book issues, and reservations. The system supports multiple book types (Physical, E-books, Audio books) and different member categories (Students, Faculty, Regular members) with role-based borrowing policies.
+A comprehensive Java-based Library Management System that provides complete functionality for managing books, members, book issues, and reservations. The system supports multiple book types (Physical, E-books, Audio books) and different member categories (Students, Faculty, Regular members) with role-based borrowing policies and automated fine calculation.
+
+## Key Features
+
+### 📚 **Multi-Format Book Management**
+- **Physical Books**: Track copies, availability, and reservations with inventory management
+- **E-Books**: Manage digital formats with DRM protection status and unlimited availability
+- **Audio Books**: Handle narrator information, audio formats, and duration tracking
+- **Categories**: Fiction, Non-Fiction, Science, Technology, History, Biography, Self-Help, Children, Poetry, Drama
+
+### 👥 **Role-Based Member System**
+- **Student Members**: 3 books limit, ₹2/day fine, 3-day grace period, 2 renewals, ₹100 max fine
+- **Faculty Members**: 5 books limit, ₹1/day fine, 5-day grace period, 3 renewals, ₹50 max fine
+- **Regular Members**: 2 books limit, ₹3/day fine, 2-day grace period, 1 renewal, ₹200 max fine
+
+### 🔄 **Advanced Borrowing System**
+- Automated due date calculation (5-day default period)
+- Grace period implementation based on member type
+- Overdue fine calculation with daily rates
+- Book renewal with policy validation
+- Reservation queue management (FIFO)
+- Duplicate reservation prevention
+
+### 📊 **Analytics & Reporting**
+- Popular books analysis with issue/reservation counts
+- Monthly borrowing trend reports
+- Fine collection summaries
+- Member engagement analytics
+- Overdue book tracking
+- Book recommendation engine based on popular authors
+
+### 💾 **Data Management**
+- Dual-format persistence (text + serialized binary)
+- Data import/export functionality
+- Automatic backup creation
+- Data integrity validation
+- Cross-platform file handling
+
+## Project Running Steps
+
+### Prerequisites
+- Java Development Kit (JDK) 8 or higher
+- Any Java IDE (Eclipse, IntelliJ IDEA, VS Code) or command line
+
+### Setup Instructions
+
+1. **Clone or Download the Project**
+   ```bash
+   git clone <repository-url>
+   cd library-management-system
+   ```
+
+2. **Create Required Directories**
+   ```bash
+   mkdir -p db import
+   ```
+
+3. **Compile the Project**
+   ```bash
+   javac -d . main/*.java model/*.java service/*.java common/*.java
+   ```
+
+4. **Run the Application**
+   ```bash
+   java main.LibraryManagementSystem
+   ```
+
+5. **Using an IDE**
+   - Import the project into your preferred IDE
+   - Set the main class as `main.LibraryManagementSystem`
+   - Run the project
+
+### Initial Setup
+- The system will create database files automatically in the `db/` directory
+- Sample data can be imported using the import functionality (Menu option 25)
+- The system supports both text and serialized data formats for backup
 
 ## Project Structure
 
@@ -16,6 +91,7 @@ A comprehensive Library Management System built in Java that provides complete f
 │   ├── books.ser/.txt      # Complete book inventory with all book types and their specific attributes
 │   ├── members.ser/.txt    # Member records with type-specific details (student ID, faculty ID, department, etc.)
 │   └── reservations.ser/.txt # Book reservation queue records with member and book IDs
+├── import/                 # Directory for data import files
 ├── main/                   # Application entry point and menu system
 │   ├── LibraryManagementSystem.java # Main class with application entry point
 │   └── LibraryManagementMenu.java   # Interactive console menu system with 27 operations organized in categories
@@ -33,93 +109,259 @@ A comprehensive Library Management System built in Java that provides complete f
 └── service/                # Business logic and operations
     ├── BookIssueService.java    # Handles book borrowing, returning, renewal, overdue tracking, and fine calculation
     ├── BookService.java         # Book management (add, update, search by ISBN/title/author, availability checking)
+    ├── ImportExportService.java # Data import/export functionality with CSV parsing and file handling
     ├── MemberService.java       # Member registration, updates, search by ID/name/email, and account management
-    └── ReservationService.java  # Book reservation queue management with conflict resolution
+    └── ReservationService.java  # Book reservation queue management with conflict resolution and FIFO ordering
 ```
 
-## Running Guide
+### File Descriptions
 
-### Prerequisites
-- Java 8 or higher
-- Command line access
+#### Common Package
+- **BookCategory.java**: Enumeration defining all supported book categories with validation methods
+- **DataManager.java**: Centralized data persistence manager handling object serialization and file I/O operations
+- **MemberPolicy.java**: Policy engine defining borrowing rules, fine rates, and limits for different member types
+- **MemberStatus.java**: Member status enumeration with validation for active, suspended, and expired states
+- **utils.java**: Comprehensive utility class with ID generation, date/time handling, file operations, and backup functionality
 
-### Compilation and Execution
-```bash
-# Compile all Java files
-javac -d . main/*.java model/*.java service/*.java common/*.java
+#### Model Package
+- **Book.java**: Abstract base class defining common book properties and abstract availability method
+- **PhysicalBook.java**: Concrete implementation for physical books with copy management and availability tracking
+- **EBook.java**: Digital book implementation with file format and DRM protection attributes
+- **AudioBook.java**: Audio book implementation with narrator, format, and duration information
+- **Member.java**: Abstract member class with borrowing logic, fine calculation, and policy enforcement
+- **StudentMember.java**: Student-specific member with academic information and moderate borrowing privileges
+- **FacultyMember.java**: Faculty member with enhanced privileges and extended borrowing capabilities
+- **RegularMember.java**: General public member with basic borrowing rights and standard policies
+- **BookIssue.java**: Transaction record for book borrowing with dates, fines, and overdue calculation
+- **Reservation.java**: Reservation record maintaining queue order and member-book associations
 
-# Run the application
-java main.LibraryManagementSystem
-```
+#### Service Package
+- **BookService.java**: Complete book management including CRUD operations, search functionality, and availability checking
+- **MemberService.java**: Member lifecycle management with registration, updates, search, and account maintenance
+- **BookIssueService.java**: Core borrowing operations including issue, return, renewal, and overdue management
+- **ReservationService.java**: Reservation queue management with FIFO ordering and conflict resolution
+- **ImportExportService.java**: Data migration utilities for importing/exporting books, members, and transaction data
 
-### Data Storage
-- The system automatically creates a `db/` directory for data persistence
-- Data is stored in both serialized (.ser) and text (.txt) formats for performance and readability
-- All data is loaded automatically on startup and saved after each operation
+## Menu Items and Functionality
 
-## Library Menu Operations
+### 🔹 **Book Operations (1-5)**
 
-The system provides a comprehensive menu with 27 operations organized into functional categories:
+**1. Add New Book**
+- Supports adding Physical Books, E-Books, and Audio Books
+- Validates all required fields (title, author, publisher, publication year, category)
+- For Physical Books: Collects page count and total copies information
+- For E-Books: Captures file format and DRM protection status
+- For Audio Books: Records narrator name, audio format, and duration
+- Automatically generates unique ISBN numbers
+- Saves to both text and serialized database formats
 
-### Book Operations (1-5)
-- **Add New Book**: Create physical books (with pages/copies), e-books (with format/DRM), or audiobooks (with narrator/duration)
-- **Update Book Info**: Modify book details and manage physical copy inventory
-- **Search Books**: Find books by ISBN, title, or author with partial matching support
-- **View Book Details**: Display complete information including type-specific attributes
-- **Check Availability**: Verify if physical books have available copies for borrowing
+**2. Update Book Info**
+- Allows modification of existing book details by ISBN lookup
+- Supports updating title, author, publisher, and publication year
+- For Physical Books: Enables adding more copies (increases both total and available counts)
+- Validates all input fields and prevents invalid data entry
+- Maintains data integrity across all book formats
 
-### Member Operations (6-10)
-- **Register Member**: Add students (with student ID/academic year/department), faculty (with faculty ID/department/designation), or regular members
-- **Update Member Info**: Modify member details and change membership status (Active/Suspended/Expired)
-- **Search Members**: Find members by ID, name, or email with partial matching
-- **View Member History**: Display borrowing history and current account status (not implemented)
-- **Fine Management**: Handle fine payments and member account management (not implemented)
+**3. Search Books**
+- **By ISBN**: Exact match search for specific book identification
+- **By Title**: Partial match search (case-insensitive) for flexible book discovery
+- **By Author**: Partial match search to find all books by specific authors
+- Displays results in formatted table with all relevant book information
+- Shows availability status and copy information for physical books
 
-### Borrowing Operations (11-15)
-- **Issue Book**: Lend books to members with automatic due date calculation, policy validation, and reservation checking
-- **Return Book**: Process book returns with overdue fine calculation and copy management
-- **Renew Book**: Extend borrowing period subject to renewal limits and reservation conflicts
-- **Reserve Book**: Allow members to reserve books with queue management and copy tracking
-- **View Overdue Books**: Display books past their due date with member details and borrowing information
+**4. View Book Details**
+- Displays comprehensive information for a specific book by ISBN
+- Shows all book attributes including category, publication details
+- For Physical Books: Displays total, available, and reserved copy counts
+- For E-Books: Shows file format and DRM protection status
+- For Audio Books: Displays narrator, format, and duration information
 
-### Advanced Features (16-19)
-- **Book Recommendations**: Suggest books based on member preferences (not implemented)
-- **Advanced Search**: Complex search with multiple criteria (not implemented)
-- **Popular Books Report**: Analytics on most borrowed books (not implemented)
-- **Member Analytics**: Insights into member borrowing patterns (not implemented)
+**5. Check Availability**
+- Verifies if a specific book is available for borrowing
+- For Physical Books: Checks if available copies > 0
+- For Digital Books: Always shows as available (unlimited copies)
+- Provides clear availability status messages
 
-### Reports & Analytics (20-23)
-- **Borrowing Reports**: Comprehensive borrowing statistics (not implemented)
-- **Fine Collection Reports**: Financial reporting on fines collected (not implemented)
-- **Book Popularity Analysis**: Detailed circulation analysis (not implemented)
-- **Member Engagement Reports**: Member activity metrics (not implemented)
+### 👥 **Member Operations (6-10)**
 
-### System Operations (24-26)
-- **Data Backup**: Create backup copies of all system data (not implemented)
-- **Data Import/Export**: Transfer data to/from external systems (not implemented)
-- **System Configuration**: Modify system settings and policies (not implemented)
+**6. Register Member**
+- Supports registration of Students, Faculty, and Regular members
+- Validates all required information (name, email, phone number)
+- For Students: Collects student ID, academic year, and department
+- For Faculty: Records faculty ID, department, and designation
+- For Regular Members: Basic information with standard privileges
+- Automatically generates unique member IDs and sets initial status to ACTIVE
 
-### Exit (27)
-- **Exit**: Safely terminate the application
+**7. Update Member Info**
+- Allows modification of member details by member ID lookup
+- Supports updating name, email, phone number, and membership status
+- Validates input data and prevents invalid entries
+- Maintains member type-specific information integrity
+- Updates both in-memory and persistent storage
 
-## Key Features
+**8. Search Members**
+- **By Member ID**: Exact match search for specific member identification
+- **By Name**: Partial match search (case-insensitive) for flexible member discovery
+- **By Email**: Partial match search for email-based member lookup
+- Displays results in formatted table with member details and borrowing status
+- Shows current borrowed books, fine amounts, and membership status
 
-**Multi-Book Type Support**: 
-- Physical books with copy management and availability tracking
-- E-books with file format and DRM protection details
-- Audiobooks with narrator information and duration tracking
+**9. View Member History**
+- Intended to show complete borrowing history for a specific member
+- Would include past issues, returns, renewals, and fine payments
 
-**Role-Based Member Policies**:
-- Students: 3 books limit, ₹2/day fine, 3-day grace period, 2 renewals, ₹100 max fine
-- Faculty: 5 books limit, ₹1/day fine, 5-day grace period, 3 renewals, ₹50 max fine  
-- Regular: 2 books limit, ₹3/day fine, 2-day grace period, 1 renewal, ₹200 max fine
+**10. Fine Management**
+- *Currently not implemented* - Placeholder for future functionality
+- Intended to handle fine payments and adjustments
+- Would provide fine calculation details and payment processing
 
-**Reservation System**: Members can reserve books with automatic queue processing and conflict resolution during issue/renewal
+### 📖 **Borrowing Operations (11-15)**
 
-**Fine Management**: Automatic calculation of overdue fines with grace periods, daily rates, maximum limits, and account suspension when limits exceeded
+**11. Issue Book**
+- Comprehensive book lending process with multiple validations
+- Verifies member eligibility (active status, within borrowing limits, acceptable fine levels)
+- Checks book availability and handles reservation conflicts
+- For reserved books: Only allows the reserving member to borrow
+- Automatically removes fulfilled reservations from the queue
+- Updates book availability (decreases available copies for physical books)
+- Records issue transaction with automatic due date calculation (5 days default)
+- Updates member's borrowed book count and borrowing status
 
-**Data Persistence**: Dual storage format using Java serialization for performance and text files for human readability, with automatic backup capabilities
+**12. Return Book**
+- Processes book returns with comprehensive validation
+- Verifies the book was actually issued to the returning member
+- Calculates overdue fines based on member type and days overdue
+- Applies grace periods according to member policies
+- Updates book availability (increases available copies for physical books)
+- Records return date and final fine amount in transaction history
+- Updates member's borrowed book count and fine balance
 
-**Comprehensive Search**: Multiple search criteria with partial matching, case-insensitive operations, and detailed result display
+**13. Renew Book**
+- Extends borrowing period for eligible members and books
+- Validates member renewal eligibility (active status, no excessive fines, within renewal limits)
+- Checks for conflicting reservations by other members
+- Prevents renewal if book is reserved by someone else
+- Extends due date by default period (5 days)
+- Updates member's renewal count and borrowing status
+- Handles reservation conflicts for same-member reservations
 
-**Business Rule Enforcement**: Borrowing limits, renewal restrictions, reservation priorities, fine-based suspensions, and member status validation ensure fair library operations
+**14. Reserve Book**
+- Allows members to reserve books that are currently unavailable
+- Validates member eligibility using same criteria as book issuing
+- Prevents duplicate reservations by the same member for the same book
+- For Physical Books: Updates reserved and available copy counts
+- For Digital Books: Records reservation for tracking purposes
+- Maintains FIFO (First-In-First-Out) reservation queue
+- Integrates with issuing process for automatic reservation fulfillment
+
+**15. View Overdue Books**
+- Displays all books that are past their due date and not yet returned
+- Shows book details, borrower information, and overdue duration
+- Includes member type and contact information for follow-up
+- Formatted table display with issue date and due date information
+- Helps library staff identify books requiring immediate attention
+
+### 🚀 **Advanced Features (16-19)**
+
+**16. Book Recommendations**
+- Analyzes borrowing patterns of a specific member to suggest popular books
+- Identifies top 10 most frequently borrowed authors
+- Recommends other available books by these popular authors
+- Uses machine learning-like approach based on historical data
+- Displays recommended books in formatted table with availability status
+
+**17. Advanced Search**
+- **Multiple Author Search**: Search books by multiple authors (comma-separated)
+- **Category and Year Filter**: Filter available books by category and publication year range
+- **Members with Overdue Books**: List all members currently having overdue books
+- Provides sophisticated search capabilities beyond basic book/member searches
+
+**18. Popular Books Report**
+- Identifies and displays the top 5 most borrowed books
+- Shows issue count and current reservation count for each popular book
+- Analyzes borrowing frequency to determine popularity rankings
+- Helps in inventory management and acquisition decisions
+- Formatted display with statistical information
+
+**19. Member Analytics**
+- *Currently not implemented* - Placeholder for future functionality
+- Intended to provide detailed member behavior analysis
+- Would include borrowing patterns, fine history, and engagement metrics
+
+### 📊 **Reports & Analytics (20-23)**
+
+**20. Borrowing Reports**
+- Generates monthly borrowing trend analysis
+- Groups book issues by month and year for pattern identification
+- Displays borrowing volume over time periods
+- Helps in understanding seasonal borrowing patterns
+- Useful for resource planning and staff scheduling
+
+**21. Fine Collection Reports**
+- Calculates total fines collected from all book issues
+- Provides financial summary of penalty revenue
+- Includes fines from overdue books and policy violations
+- Helps in financial reporting and budget planning
+
+**22. Book Popularity Analysis**
+- Detailed analysis of book borrowing patterns
+- Same functionality as Popular Books Report (Menu 18)
+- Identifies trending books and authors
+- Supports collection development decisions
+
+**23. Member Engagement Reports**
+- *Currently not implemented* - Placeholder for future functionality
+- Intended to analyze member activity and engagement levels
+- Would include metrics like borrowing frequency, renewal patterns, and fine history
+
+### ⚙️ **System Operations (24-26)**
+
+**24. Data Backup**
+- *Currently not implemented* - Placeholder for future functionality
+- Intended to create comprehensive system backups
+- Would include all database files and configuration data
+
+**25. Data Import/Export**
+- **Import Books**: Load book data from CSV files in the import/ directory
+- **Import Members**: Load member data from formatted text files
+- **Import Book Issues**: Load transaction history from external files
+- Supports data migration and bulk data entry
+- Validates imported data and maintains referential integrity
+- Handles different book types and member categories during import
+
+**26. System Configuration**
+- *Currently not implemented* - Placeholder for future functionality
+- Intended for system settings and policy configuration
+- Would allow customization of borrowing policies and fine rates
+
+### 🚪 **Exit Operation (27)**
+
+**27. Exit**
+- Gracefully terminates the application
+- Displays farewell message
+- Ensures all data is properly saved before exit
+- Closes all system resources and database connections
+
+## Technical Implementation Details
+
+### Data Persistence
+- **Dual Format Storage**: Each data type is saved in both human-readable text format (.txt) and efficient binary format (.ser)
+- **Automatic Backup**: Text files serve as backup and manual inspection capability
+- **Serialization**: Binary files enable fast loading and object integrity
+
+### Policy Engine
+- **Configurable Rules**: All borrowing policies are centralized in MemberPolicy class
+- **Type-Based Logic**: Different rules for Students, Faculty, and Regular members
+- **Extensible Design**: Easy to add new member types or modify existing policies
+
+### Error Handling
+- **Comprehensive Validation**: Input validation at multiple levels
+- **Graceful Degradation**: System continues operation even with data inconsistencies
+- **User-Friendly Messages**: Clear error messages for all failure scenarios
+
+### Performance Optimization
+- **Efficient Search**: Stream API usage for fast data filtering and searching
+- **Memory Management**: Lazy loading and efficient data structures
+- **Scalable Design**: Architecture supports large datasets and concurrent operations
+
+This Library Management System provides a complete solution for modern library operations with robust data management, flexible policies, and comprehensive reporting capabilities.

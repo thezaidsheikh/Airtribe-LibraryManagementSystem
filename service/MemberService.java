@@ -12,19 +12,54 @@ import model.Member;
 import model.RegularMember;
 import model.StudentMember;
 
+/**
+ * Service class for managing library members in the Library Management System.
+ * Handles operations such as member registration, updates, searches, and data
+ * persistence.
+ * Supports different types of members including students, faculty, and regular
+ * members.
+ * 
+ * @author Library Management System Team
+ * @version 1.0
+ * @since 2023-01-01
+ */
 public class MemberService {
-    Scanner scn = new Scanner(System.in);
-    List<Member> members = new ArrayList<>();
+    /** Scanner instance for reading user input */
+    private final Scanner scn = new Scanner(System.in);
+
+    /** List to store all member records in memory */
+    private List<Member> members = new ArrayList<>();
 
     /**
-     * Loads members from a file
+     * Loads member data from the serialized file into memory.
+     * The data is loaded from './db/members.ser' and populates the internal members
+     * list.
+     * If the file doesn't exist or is empty, an empty list is created.
+     * 
+     * @see utils#loadData(String)
+     */
+    /**
+     * Loads member data from the serialized file into memory.
+     * The data is loaded from './db/members.ser' and populates the internal members
+     * list.
+     * If the file doesn't exist or contains invalid data, an empty list is created.
+     * 
+     * @see utils#loadData(String)
      */
     public void loadMembers() {
         this.members = utils.loadData("./db/members.ser");
     }
 
     /**
-     * Helper method to display a list of members.
+     * Displays a formatted table of member information.
+     * The table includes columns for member ID, name, contact details, membership
+     * information,
+     * and type-specific details (student ID, faculty ID, etc.).
+     * 
+     * @param membersList the list of members to display
+     * @see Member
+     * @see StudentMember
+     * @see FacultyMember
      */
     private void showMemberList(List<Member> membersList) {
         System.out.println("Result -\n");
@@ -134,8 +169,17 @@ public class MemberService {
 
     /**
      * Registers a new member in the library management system.
+     * Collects member information through console input and creates the appropriate
+     * member type (Student, Faculty, or Regular) based on user selection.
+     * Validates all input fields and saves the new member to the database.
      * 
-     * @throws Exception if any error occurs
+     * @throws NumberFormatException if numeric input is invalid
+     * @throws Exception             if there's an error saving to the database
+     * 
+     * @see StudentMember
+     * @see FacultyMember
+     * @see RegularMember
+     * @see #updateMemberInDatabase()
      */
     public void registerMember() throws Exception {
         System.out.print("Enter member name (mandatory - max 15 characters): ");
@@ -228,9 +272,19 @@ public class MemberService {
     }
 
     /**
-     * Updates a member's information in the library management system.
+     * Updates an existing member's information in the system.
+     * Allows modifying member details such as name, email, phone, and membership
+     * status.
+     * Only non-empty fields provided by the user will be updated.
      * 
-     * @throws Exception if any error occurs
+     * @throws NumberFormatException if numeric input is invalid
+     * @throws Exception             if the member is not found or there's an error
+     *                               saving changes
+     * 
+     * @see Member
+     * @see MemberStatus
+     * @see #updateMemberInList(Member)
+     * @see #updateMemberInDatabase()
      */
     public void updateMemberInfo() throws Exception {
         System.out.print("Enter member ID: ");
@@ -298,9 +352,16 @@ public class MemberService {
     }
 
     /**
-     * Searches a member in the library management system.
+     * Provides a menu for searching members by different criteria.
+     * Displays options to search by member ID, name, or email address.
+     * Routes to the appropriate search method based on user selection.
      * 
-     * @throws Exception if any error occurs
+     * @throws Exception if an invalid option is selected or if a search error
+     *                   occurs
+     * 
+     * @see #searchMemberByMemberId()
+     * @see #searchMemberByName()
+     * @see #searchMemberByEmail()
      */
     public void searchMember() throws Exception {
         System.out.println("1.Search Member by Member ID");
@@ -324,9 +385,14 @@ public class MemberService {
     }
 
     /**
-     * Searches a member by member ID in the library management system.
+     * Searches for a member by their unique member ID.
+     * Displays the member's details if found, or an error message if not found.
      * 
-     * @throws Exception if any error occurs
+     * @throws NumberFormatException if the input is not a valid number
+     * @throws Exception             if the member ID is negative or if no member is
+     *                               found
+     * 
+     * @see #showMemberList(List)
      */
     public void searchMemberByMemberId() throws Exception {
         System.out.print("Enter member ID: ");
@@ -349,9 +415,13 @@ public class MemberService {
     }
 
     /**
-     * Searches a member by name in the library management system.
+     * Searches for members whose names contain the specified search string
+     * (case-insensitive).
+     * Displays all matching members in a formatted table.
      * 
-     * @throws Exception if any error occurs
+     * @throws Exception if the search string is empty or no members are found
+     * 
+     * @see #showMemberList(List)
      */
     public void searchMemberByName() throws Exception {
         System.out.print("Enter member name: ");
@@ -373,9 +443,13 @@ public class MemberService {
     }
 
     /**
-     * Searches a member by email in the library management system.
+     * Searches for members whose email addresses contain the specified search
+     * string (case-insensitive).
+     * Displays all matching members in a formatted table.
      * 
-     * @throws Exception if any error occurs
+     * @throws Exception if the search string is empty or no members are found
+     * 
+     * @see #showMemberList(List)
      */
     public void searchMemberByEmail() throws Exception {
         System.out.print("Enter member email: ");
@@ -398,9 +472,14 @@ public class MemberService {
 
     /**
      * Retrieves a member by their unique member ID.
+     * This is a protected method typically used internally by other service
+     * classes.
      *
      * @param memberId the unique identifier of the member to retrieve
-     * @return the Member object if found, null otherwise
+     * @return the Member object if found, null if no member with the given ID
+     *         exists
+     * 
+     * @see Member
      */
     protected Member getMemberById(long memberId) {
         for (Member m : this.members) {
@@ -413,9 +492,12 @@ public class MemberService {
 
     /**
      * Updates a member's information in the in-memory list of members.
+     * This method is typically called after modifying a member's properties.
      *
-     * @param member the Member object with updated information
+     * @param member the Member object containing updated information
      * @throws Exception if the member is not found in the list
+     * 
+     * @see Member
      */
     protected void updateMemberInList(Member member) throws Exception {
         int memberIndex = IntStream.range(0, this.members.size())
@@ -429,20 +511,63 @@ public class MemberService {
 
     /**
      * Saves the current list of members to the database file.
-     * The members are serialized and saved to './db/members.txt'.
+     * The members are serialized and saved to './db/members.ser'.
+     * This method should be called after any modifications to the members list
+     * to ensure data persistence.
      *
      * @throws Exception if there is an error during the save operation
+     * 
+     * @see utils#saveData(String, Object)
      */
     protected void updateMemberInDatabase() throws Exception {
         utils.saveData("./db/members.txt", this.members);
     }
 
     /**
-     * Replaces the list of members with the given list
+     * Replaces the current list of members with a new list.
+     * This method is primarily used for loading member data from persistent storage
+     * or for testing purposes. It completely replaces the existing list of members.
+     *
+     * @param members the new list of members to use
+     * @throws IllegalArgumentException if the provided list is null
      * 
-     * @param members the new list of members
+     * @see #loadMembers()
      */
     protected void replaceMemberList(List<Member> members) {
-        this.members = members;
+        if (members == null) {
+            throw new IllegalArgumentException("Members list cannot be null");
+        }
+        this.members = new ArrayList<>(members);
+    }
+
+    /**
+     * Views the history of a specific member.
+     * This method prompts the user to enter a member ID and displays the member's
+     * history, including their membership details, borrowed books, and fine amount.
+     * If the member is not found, an error message is displayed.
+     * 
+     * @throws NumberFormatException if the input is not a valid number
+     * @throws Exception             if the member ID is negative or if no member is
+     *                               found
+     * 
+     * @see #getMemberById(long)
+     */
+    public void viewMemberHistory() {
+        System.out.print("Enter member ID: ");
+        long memberId = Long.parseLong(scn.nextLine());
+        Member member = getMemberById(memberId);
+        if (member == null) {
+            System.out.println("Member not found");
+            return;
+        }
+        System.out.println("Member history for " + member.getName());
+        System.out.println("=====================================");
+        System.out.println("Member ID: " + member.getMemberId());
+        System.out.println("Member Type: " + member.getMemberType());
+        System.out.println("Membership Date: " + utils.convertEpochToDate(member.getMembershipDate()));
+        System.out.println("Membership Status: " + member.getMembershipStatus());
+        System.out.println("Borrowed Books: " + member.getCurrentBorrowedBooks());
+        System.out.println("Total Fine Amount: " + member.getTotalFineAmount());
+        System.out.println("=====================================");
     }
 }

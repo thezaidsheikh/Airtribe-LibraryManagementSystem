@@ -19,7 +19,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 /**
- * Utility class for common operations
+ * Utility class providing common helper methods for the library management system.
+ * This class contains static methods for various operations including ID generation,
+ * date/time manipulation, file I/O, and data serialization.
  */
 public class utils {
     /**
@@ -61,14 +63,28 @@ public class utils {
         return localDate;
     }
 
+    /**
+     * Calculates the epoch time after a specified number of days from the given epoch time.
+     *
+     * @param epochTime the starting epoch time in milliseconds
+     * @param days the number of days to add (can be negative to subtract days)
+     * @return the new epoch time after adding the specified days
+     */
     public static long getDateAfterDays(long epochTime, int days) {
         return Instant.ofEpochMilli(epochTime).plus(Duration.ofDays(days)).toEpochMilli();
     }
 
+    /**
+     * Calculates the absolute difference in days between two epoch timestamps.
+     *
+     * @param epochMillis1 the first epoch time in milliseconds
+     * @param epochMillis2 the second epoch time in milliseconds
+     * @return the absolute difference in days between the two timestamps
+     */
     public static int getDayDiff(long epochMillis1, long epochMillis2) {
-        long millisPerDay = 24 * 60 * 60 * 1000;
+        final long MILLIS_PER_DAY = 24 * 60 * 60 * 1000;
         long diffInMillis = Math.abs(epochMillis2 - epochMillis1);
-        long dayDifference = diffInMillis / millisPerDay;
+        long dayDifference = diffInMillis / MILLIS_PER_DAY;
         return (int) Math.abs(dayDifference);
     }
 
@@ -107,6 +123,14 @@ public class utils {
         }
     }
 
+    /**
+     * Loads a list of objects from a serialized file.
+     * If the file doesn't exist or an error occurs, returns an empty list.
+     *
+     * @param <T> the type of objects in the list
+     * @param fileName the name of the file to load data from
+     * @return a List containing the deserialized objects, or an empty list if file doesn't exist or error occurs
+     */
     public static <T> List<T> loadData(String fileName) {
         try {
             File file = new File(fileName);
@@ -120,8 +144,18 @@ public class utils {
         }
     }
 
+    /**
+     * Reads all lines from a text file and returns them as a Stream of Strings.
+     * Creates the file if it doesn't exist.
+     *
+     * @param fileName the name of the file to read
+     * @return a Stream containing all lines from the file
+     * @throws Error if an I/O error occurs while reading the file
+     */
     public static Stream<String> readData(String fileName) {
         File file = new File(fileName);
+        
+        // Create the file if it doesn't exist
         if (!file.exists()) {
             try {
                 file.createNewFile();
@@ -129,12 +163,12 @@ public class utils {
                 System.out.println("Error creating file: " + e.getMessage());
             }
         }
-        Stream<String> stream = null;
+        
+        // Read all lines from the file
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            stream = reader.lines().collect(Collectors.toList()).stream();
-            return stream;
+            return reader.lines().collect(Collectors.toList()).stream();
         } catch (IOException e) {
-            System.out.println("Error reading file: " + e.getMessage());
+            System.err.println("Error reading file: " + e.getMessage());
             throw new Error("Error reading file: " + e.getMessage());
         }
     }
